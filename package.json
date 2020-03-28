@@ -1,0 +1,18 @@
+{
+  "name": "SearchApartmentsBot",
+  "version": "1.0.0",
+  "description": "Telegram бот - ищет новые объявления о продаже недвижимости на Avito",
+  "author": "akzharik@mail.ru",
+  "license": "MIT",
+  "scripts": {
+    "bot": "node bot.js",
+    "avito": "node avito.js"
+  },
+  "dependencies": {
+    "needle": "^2.3.3",
+    "node-html-parser": "^1.2.13",
+    "node-telegram-bot-api": "^0.40.0",
+    "socks5-https-client": "^1.2.1"
+  },
+  "devDependencies": {}
+}
