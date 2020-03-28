@@ -4,7 +4,7 @@ const telegramBot = require(`node-telegram-bot-api`);
 const agent = require('socks5-https-client/lib/Agent');
 
 const MIN = 60000; // ms
-const TOKEN = `992353191:AAEJJIRS_SVk8G2f7ZXQYzoX2N__TTW76pc`;
+const TOKEN = ``;
 const NEW_URL_CONFIG = {
   city: ``,
   category: ``,
