@@ -2,9 +2,9 @@ const utils = require(`./utils.js`);
 const avito = require(`./avito.js`);
 const telegramBot = require(`node-telegram-bot-api`);
 const agent = require('socks5-https-client/lib/Agent');
+const fs = require(`fs`);
 
 const MIN = 60000; // ms
-const TOKEN = ``;
 const NEW_URL_CONFIG = {
   city: ``,
   category: ``,
@@ -65,7 +65,7 @@ const BOT_MSGS = {
   switchOff: `Подписка отключена.\nЧтобы подписаться снова нажми /start.`,
   close: `Закрываю клавиатуру...`
 };
-
+const TOKEN = fs.readFileSync(`token.txt`, `utf8`).trim();
 const bot = new telegramBot(TOKEN, {
   polling: {
     interval: 300,
@@ -78,8 +78,8 @@ const bot = new telegramBot(TOKEN, {
   request: {
     agentClass: agent,
     agentOptions: {
-      socksHost: `78.46.218.20`,
-      socksPort: 29727
+      socksHost: `185.62.58.208`,
+      socksPort: 10234
     }
   }
 });

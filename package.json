@@ -9,6 +9,7 @@
     "avito": "node avito.js"
   },
   "dependencies": {
+    "fs": "0.0.1-security",
     "needle": "^2.3.3",
     "node-html-parser": "^1.2.13",
     "node-telegram-bot-api": "^0.40.0",
