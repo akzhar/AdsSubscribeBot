@@ -28,8 +28,8 @@ function retrieveData(options) {
     //   proxy: `http://62.112.118.14:8080` // Russian proxy for Avito
     // };
     needle.get(options.url, { proxy: `http://62.112.118.14:8080` }, function(error, response) {
-      utils.logServerResponse(response);
-      if (error || response.statusCode !== 200) throw error;
+      // utils.logServerResponse(response);
+      if (error) throw error;
       const html = response.body;
       const newItems = getAvitoData(html, options);
       if (newItems.length) results = [...results, ...newItems];
