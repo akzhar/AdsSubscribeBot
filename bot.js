@@ -18,13 +18,13 @@ const EXTERNAL_URL = process.env.CUSTOM_ENV_VARIABLE || 'https://tranquil-ravine
 // };
 const BOT_OPTIONS = {
   // request: BOT_REQUEST,
-  polling: {
-    interval: 300,
-    autoStart: true,
-    params: {
-      timeout: 10
-    }
-  },
+  // polling: {
+  //   interval: 300,
+  //   autoStart: true,
+  //   params: {
+  //     timeout: 10
+  //   }
+  // },
   webHook: {
     port: PORT,
     host: HOST
