@@ -9,7 +9,7 @@ const agent = require('socks5-https-client/lib/Agent');
 const REQUEST = {
   agentClass: agent,
   agentOptions: {
-    socksHost: `0.0.0.0`,
+    socksHost: process.env.HOST,
     socksPort: process.env.PORT
   }
 };
