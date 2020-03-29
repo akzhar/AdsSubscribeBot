@@ -31,7 +31,7 @@ function retrieveData(options) {
         if (newItems.length) results = [...results, ...newItems];
         if (page === PAGE_COUNT) printResults(results, options);
       })
-      .catch(error) throw error;
+      .catch((error) => {throw error});
   }
 }
 
