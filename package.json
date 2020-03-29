@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node bot.js",
-    "deploy": "git add . && git commit -m 'fix' && git push heroku master"
+    "deploy": "git add . && git commit -m 'fix' && git push heroku master",
+    "logs": "heroku logs --tail"
   },
   "dependencies": {
     "socks5-https-client": "^1.2.1",

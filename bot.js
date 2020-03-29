@@ -12,8 +12,8 @@ const EXTERNAL_URL = process.env.CUSTOM_ENV_VARIABLE || 'https://tranquil-ravine
 const BOT_REQUEST = {
   agentClass: agent,
   agentOptions: {
-    socksHost: `185.62.58.208`,
-    socksPort: 10234
+    socksHost: `159.89.162.107`,
+    socksPort: 45659
   }
 };
 const BOT_OPTIONS = {
