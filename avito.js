@@ -27,7 +27,7 @@ function retrieveData(options) {
     //   follow_max: 5, // Number of redirects to follow
     //   proxy: `http://62.112.118.14:8080` // Russian proxy for Avito
     // };
-    needle.get(options.url, params, { proxy: `http://62.112.118.14:8080` }, function(error, response) {
+    needle.get(options.url, { proxy: `http://62.112.118.14:8080` }, function(error, response) {
       utils.logServerResponse(response);
       if (error || response.statusCode !== 200) throw error;
       const html = response.body;
