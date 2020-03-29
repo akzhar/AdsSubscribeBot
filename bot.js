@@ -4,8 +4,9 @@ const telegramBot = require(`node-telegram-bot-api`);
 const fs = require(`fs`);
 // const agent = require('socks5-https-client/lib/Agent');
 
-const PORT = process.env.PORT || 8443;
-const HOST = process.env.HOST;
+const PORT = process.env.PORT || 443;
+const HOST = `0.0.0.0`;
+const EXTERNAL_URL = process.env.CUSTOM_ENV_VARIABLE || 'https://tranquil-ravine-43566.herokuapp.com'
 // обход блокировки Telegram в России --> host & port
 // https://50na50.net/ru/proxy/socks5list
 // const BOT_REQUEST = {
@@ -29,6 +30,10 @@ const BOT_OPTIONS = {
     host: HOST
   }
 };
+const TOKEN = fs.readFileSync(`token.txt`, `utf8`).trim();
+const bot = new telegramBot(TOKEN, BOT_OPTIONS);
+bot.setWebHook(`${EXTERNAL_URL}:443/bot${token}`);
+
 const MIN = 60000; // ms
 const NEW_URL_CONFIG = {
   city: ``,
@@ -90,8 +95,6 @@ const BOT_MSGS = {
   switchOff: `Подписка отключена.\nЧтобы подписаться снова нажми /start.`,
   close: `Закрываю клавиатуру...`
 };
-const TOKEN = fs.readFileSync(`token.txt`, `utf8`).trim();
-const bot = new telegramBot(TOKEN, BOT_OPTIONS);
 
 const users = {};
 
