@@ -23,20 +23,28 @@ function retrieveData(options) {
   let results = [];
   for (let page = 1; page <= PAGE_COUNT; page++) {
     results = [];
-    const params = {
-      follow_max: 5, // Number of redirects to follow
-      proxy: `https://62.112.118.14:8080` // Russian proxy for Avito
-    };
-    needle(`get`, options.url, params)
-      .then((response) => {
-        utils.logServerResponse(response);
-        if (response.statusCode !== 200) throw new Error();
-        const html = response.body;
-        const newItems = getAvitoData(html, options);
-        if (newItems.length) results = [...results, ...newItems];
-        if (page === PAGE_COUNT) printResults(results, options);
-      })
-      .catch((error) => {throw error});
+    // const params = {
+    //   follow_max: 5, // Number of redirects to follow
+    //   proxy: `http://62.112.118.14:8080` // Russian proxy for Avito
+    // };
+    needle.get(options.url, params, { proxy: `http://62.112.118.14:8080` }, function(error, response) {
+      utils.logServerResponse(response);
+      if (error || response.statusCode !== 200) throw error;
+      const html = response.body;
+      const newItems = getAvitoData(html, options);
+      if (newItems.length) results = [...results, ...newItems];
+      if (page === PAGE_COUNT) printResults(results, options);
+    });
+    // needle(`get`, options.url, params)
+    //   .then((response) => {
+    //     utils.logServerResponse(response);
+    //     if (response.statusCode !== 200) throw new Error();
+    //     const html = response.body;
+    //     const newItems = getAvitoData(html, options);
+    //     if (newItems.length) results = [...results, ...newItems];
+    //     if (page === PAGE_COUNT) printResults(results, options);
+    //   })
+    //   .catch((error) => {throw error});
   }
 }
 
