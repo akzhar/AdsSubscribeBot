@@ -5,7 +5,8 @@
   "author": "akzharik@mail.ru",
   "license": "MIT",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node bot.js",
+    "deploy": "git add . && git commit -m 'fix' && git push heroku master"
   },
   "dependencies": {
     "socks5-https-client": "^1.2.1",
