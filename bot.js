@@ -12,7 +12,7 @@ const EXTERNAL_URL = process.env.CUSTOM_ENV_VARIABLE || 'https://tranquil-ravine
 const BOT_REQUEST = {
   agentClass: agent,
   agentOptions: {
-    socksHost: `89.133.198.138`,
+    socksHost: `89.133.198.138`, // proxy for access Telegram from Russia
     socksPort: 6881
   }
 };

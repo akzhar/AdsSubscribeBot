@@ -27,9 +27,10 @@ function retrieveData(options) {
       follow_max: 5, // Number of redirects to follow
       proxy: `https://62.112.118.14:8080` // Russian proxy for Avito
     };
-    needle(`get`, options.url, null, params)
+    needle(`get`, options.url, params)
       .then((response) => {
         utils.logServerResponse(response);
+        if (response.statusCode !== 200) throw new Error();
         const html = response.body;
         const newItems = getAvitoData(html, options);
         if (newItems.length) results = [...results, ...newItems];
