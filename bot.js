@@ -2,27 +2,27 @@ const utils = require(`./utils.js`);
 const avito = require(`./avito.js`);
 const telegramBot = require(`node-telegram-bot-api`);
 const fs = require(`fs`);
-// const agent = require('socks5-https-client/lib/Agent');
+// off to deploy, on to local
+const agent = require('socks5-https-client/lib/Agent');
 
 const PORT = process.env.PORT || 443;
 const HOST = `0.0.0.0`;
 const EXTERNAL_URL = process.env.CUSTOM_ENV_VARIABLE || 'https://tranquil-ravine-43566.herokuapp.com'
-// обход блокировки Telegram в России --> host & port
-// https://50na50.net/ru/proxy/socks5list
-// const BOT_REQUEST = {
-//   agentClass: agent,
-//   agentOptions: {
-//     socksHost: `89.133.198.138`,
-//     socksPort: 6881
-//   }
-// };
+// off to deploy, on to local
+const BOT_REQUEST = {
+  agentClass: agent,
+  agentOptions: {
+    socksHost: `89.133.198.138`,
+    socksPort: 6881
+  }
+};
 const BOT_WEBHOOKS = {
   port: PORT,
   host: HOST
 };
 const BOT_OPTIONS = {
   // polling: true, // off to deploy, on to local
-  // request: BOT_REQUEST,
+  // request: BOT_REQUEST, // off to deploy, on to local
   webHook: BOT_WEBHOOKS // on to deploy, off to local
 };
 const TOKEN = fs.readFileSync(`token.txt`, `utf8`).trim();
