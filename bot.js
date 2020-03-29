@@ -21,13 +21,13 @@ const BOT_WEBHOOKS = {
   host: HOST
 };
 const BOT_OPTIONS = {
-  webHook: BOT_WEBHOOKS, // off to deploy, on to local
-  request: BOT_REQUEST,
-  polling: true
+  // polling: true, // off to deploy, on to local
+  webHook: BOT_WEBHOOKS, // on to deploy, off to local
+  request: BOT_REQUEST
 };
 const TOKEN = fs.readFileSync(`token.txt`, `utf8`).trim();
 const bot = new telegramBot(TOKEN, BOT_OPTIONS);
-bot.setWebHook(`${EXTERNAL_URL}:443/bot${TOKEN}`); // off to deploy, on to local
+bot.setWebHook(`${EXTERNAL_URL}:443/bot${TOKEN}`); // on to deploy, off to local
 
 const MIN = 60000; // ms
 const NEW_URL_CONFIG = {
