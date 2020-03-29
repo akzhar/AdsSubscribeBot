@@ -2,17 +2,17 @@ const utils = require(`./utils.js`);
 const avito = require(`./avito.js`);
 const telegramBot = require(`node-telegram-bot-api`);
 const fs = require(`fs`);
-// const agent = require('socks5-https-client/lib/Agent');
+const agent = require('socks5-https-client/lib/Agent');
 
 // обход блокировки Telegram в России --> host & port
 // https://50na50.net/ru/proxy/socks5list
-// const REQUEST = {
-//   agentClass: agent,
-//   agentOptions: {
-//     socksHost: `185.62.58.208`,
-//     socksPort: 10234
-//   }
-// };
+const REQUEST = {
+  agentClass: agent,
+  agentOptions: {
+    socksHost: `0.0.0.0`,
+    socksPort: process.env.PORT
+  }
+};
 const MIN = 60000; // ms
 const NEW_URL_CONFIG = {
   city: ``,
@@ -76,7 +76,7 @@ const BOT_MSGS = {
 };
 const TOKEN = fs.readFileSync(`token.txt`, `utf8`).trim();
 const bot = new telegramBot(TOKEN, {
-  // request: REQUEST,
+  request: REQUEST,
   polling: {
     interval: 300,
     autoStart: true,
