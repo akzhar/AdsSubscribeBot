@@ -12,27 +12,22 @@ const EXTERNAL_URL = process.env.CUSTOM_ENV_VARIABLE || 'https://tranquil-ravine
 const BOT_REQUEST = {
   agentClass: agent,
   agentOptions: {
-    socksHost: `159.89.162.107`,
-    socksPort: 45659
+    socksHost: `89.133.198.138`,
+    socksPort: 6881
   }
 };
+const BOT_WEBHOOKS = {
+  port: PORT,
+  host: HOST
+};
 const BOT_OPTIONS = {
+  webHook: BOT_WEBHOOKS, // off to deploy, on to local
   request: BOT_REQUEST,
-  // polling: {
-  //   interval: 300,
-  //   autoStart: true,
-  //   params: {
-  //     timeout: 10
-  //   }
-  // },
-  webHook: {
-    port: PORT,
-    host: HOST
-  }
+  polling: true
 };
 const TOKEN = fs.readFileSync(`token.txt`, `utf8`).trim();
 const bot = new telegramBot(TOKEN, BOT_OPTIONS);
-bot.setWebHook(`${EXTERNAL_URL}:443/bot${TOKEN}`);
+bot.setWebHook(`${EXTERNAL_URL}:443/bot${TOKEN}`); // off to deploy, on to local
 
 const MIN = 60000; // ms
 const NEW_URL_CONFIG = {

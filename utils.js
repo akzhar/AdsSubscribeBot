@@ -30,8 +30,8 @@ logUsersInfo = (users, id) => {
 
 logServerResponse = (response) => {
   console.log(`СТАТУС:`, response.statusCode);
-  console.log(`ЗАГОЛОВКИ ОТВЕТА:`, utils.debug(response.headers));
-  console.log(`КОНТЕНТ:`, response.body);
+  // console.log(`ЗАГОЛОВКИ ОТВЕТА:`, utils.debug(response.headers));
+  // console.log(`КОНТЕНТ:`, response.body);
   // console.log(`РЕДИРЕКТ:`, redirectedURL);
 }
 
