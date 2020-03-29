@@ -32,7 +32,7 @@ const BOT_OPTIONS = {
 };
 const TOKEN = fs.readFileSync(`token.txt`, `utf8`).trim();
 const bot = new telegramBot(TOKEN, BOT_OPTIONS);
-bot.setWebHook(`${EXTERNAL_URL}:443/bot${token}`);
+bot.setWebHook(`${EXTERNAL_URL}:443/bot${TOKEN}`);
 
 const MIN = 60000; // ms
 const NEW_URL_CONFIG = {
