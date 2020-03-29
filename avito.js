@@ -1,7 +1,7 @@
 const utils = require(`./utils.js`);
 let request = require(`request`);
 // Cookies are disabled by default (else, they would be used in subsequent requests). To enable cookies, set jar to true
-request = request.defaults({jar: true});
+// request = request.defaults({jar: true});
 const parseHTML = require(`node-html-parser`).parse;
 
 const BY_DATE_CODE = 104;
@@ -25,13 +25,8 @@ function retrieveData(options) {
   let results = [];
   for (let page = 1; page <= PAGE_COUNT; page++) {
     results = [];
-    // var params = {
-    //   follow_max: 5,    // follow up to five redirects
-    //   headers: {
-    //     cookies: {}
-    //   }
-    // }
-    request(options.url, (error, response) => {
+    const j = request.jar()
+    request({url: options.url, jar: j}, (error, response) => {
       if (error) throw error;
       utils.logServerResponse(response);
       const html = response.body;
@@ -48,18 +43,12 @@ function retrieveData(options) {
 //     results = [];
 //     request(`get`, options.url)
 //       .then((response) => {
-//         const redirectedURL = `${SITE}${response.headers.location}&p=${page}`;
-//         utils.logServerResponse(response, redirectedURL);
-//         request(`get`, redirectedURL)
-//           .then((response) => {
-//             const html = response.body;
-//             const newItems = getAvitoData(html, options);
-//             if (newItems.length) results = [...results, ...newItems];
-//             if (page === PAGE_COUNT) printResults(results, options);
-//           })
-//           .catch((error) => { throw error });
+//         utils.logServerResponse(response);
+//         const html = response.body;
+//         const newItems = getAvitoData(html, options);
+//         if (newItems.length) results = [...results, ...newItems];
+//         if (page === PAGE_COUNT) printResults(results, options);
 //       })
-//       .catch((error) => { throw error });
 //   }
 // }
 
