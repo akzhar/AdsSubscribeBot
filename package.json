@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "fs": "0.0.1-security",
+    "needle": "^2.3.3",
     "node-html-parser": "^1.2.13",
     "node-telegram-bot-api": "^0.40.0",
-    "request": "^2.88.2",
     "socks5-https-client": "^1.2.1"
   },
   "devDependencies": {}

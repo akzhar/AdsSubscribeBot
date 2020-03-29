@@ -1,7 +1,5 @@
 const utils = require(`./utils.js`);
-let request = require(`request`);
-// Cookies are disabled by default (else, they would be used in subsequent requests). To enable cookies, set jar to true
-// request = request.defaults({jar: true});
+const needle = require(`needle`);
 const parseHTML = require(`node-html-parser`).parse;
 
 const BY_DATE_CODE = 104;
@@ -25,32 +23,17 @@ function retrieveData(options) {
   let results = [];
   for (let page = 1; page <= PAGE_COUNT; page++) {
     results = [];
-    const j = request.jar()
-    request({url: options.url, jar: j}, (error, response) => {
-      if (error) throw error;
-      utils.logServerResponse(response);
-      const html = response.body;
-      const newItems = getAvitoData(html, options);
-      if (newItems.length) results = [...results, ...newItems];
-      if (page === PAGE_COUNT) printResults(results, options);
-    })
+    needle(`get`, options.url, null, {follow_max: 5})
+      .then((response) => {
+        utils.logServerResponse(response);
+        const html = response.body;
+        const newItems = getAvitoData(html, options);
+        if (newItems.length) results = [...results, ...newItems];
+        if (page === PAGE_COUNT) printResults(results, options);
+      })
+      .catch(error) throw error;
   }
 }
-
-// function retrieveData(options) {
-//   let results = [];
-//   for (let page = 1; page <= PAGE_COUNT; page++) {
-//     results = [];
-//     request(`get`, options.url)
-//       .then((response) => {
-//         utils.logServerResponse(response);
-//         const html = response.body;
-//         const newItems = getAvitoData(html, options);
-//         if (newItems.length) results = [...results, ...newItems];
-//         if (page === PAGE_COUNT) printResults(results, options);
-//       })
-//   }
-// }
 
 function getAvitoData(html, options) {
   const items = parseHTML(html).querySelectorAll(SELECTOR.elem);
