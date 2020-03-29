@@ -28,11 +28,11 @@ logUsersInfo = (users, id) => {
   console.log(`ОТПРАВЛЯЮ ЗАПРОС НА:`, users[id].url);
 }
 
-logServerResponse = (response, redirectedURL) => {
+logServerResponse = (response) => {
   console.log(`СТАТУС:`, response.statusCode);
-  // console.log(`ЗАГОЛОВКИ ОТВЕТА:`, utils.debug(response.headers));
-  // console.log(`КОНТЕНТ:`, response.body);
-  console.log(`РЕДИРЕКТ:`, redirectedURL);
+  console.log(`ЗАГОЛОВКИ ОТВЕТА:`, utils.debug(response.headers));
+  console.log(`КОНТЕНТ:`, response.body);
+  // console.log(`РЕДИРЕКТ:`, redirectedURL);
 }
 
 logFrequency = (frequency) => {

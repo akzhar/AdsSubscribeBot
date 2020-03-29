@@ -25,20 +25,36 @@ function retrieveData(options) {
     results = [];
     needle(`get`, options.url)
       .then((response) => {
-        const redirectedURL = `${SITE}${response.headers.location}&p=${page}`;
-        utils.logServerResponse(response, redirectedURL);
-        needle(`get`, redirectedURL)
-          .then((response) => {
-            const html = response.body;
-            const newItems = getAvitoData(html, options);
-            if (newItems.length) results = [...results, ...newItems];
-            if (page === PAGE_COUNT) printResults(results, options);
-          })
-          .catch((error) => { throw error });
+        utils.logServerResponse(response);
+        const html = response.body;
+        const newItems = getAvitoData(html, options);
+        if (newItems.length) results = [...results, ...newItems];
+        if (page === PAGE_COUNT) printResults(results, options);
       })
       .catch((error) => { throw error });
   }
 }
+
+// function retrieveData(options) {
+//   let results = [];
+//   for (let page = 1; page <= PAGE_COUNT; page++) {
+//     results = [];
+//     needle(`get`, options.url)
+//       .then((response) => {
+//         const redirectedURL = `${SITE}${response.headers.location}&p=${page}`;
+//         utils.logServerResponse(response, redirectedURL);
+//         needle(`get`, redirectedURL)
+//           .then((response) => {
+//             const html = response.body;
+//             const newItems = getAvitoData(html, options);
+//             if (newItems.length) results = [...results, ...newItems];
+//             if (page === PAGE_COUNT) printResults(results, options);
+//           })
+//           .catch((error) => { throw error });
+//       })
+//       .catch((error) => { throw error });
+//   }
+// }
 
 function getAvitoData(html, options) {
   const items = parseHTML(html).querySelectorAll(SELECTOR.elem);
