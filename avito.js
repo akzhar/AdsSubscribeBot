@@ -45,7 +45,7 @@ function retrieveData(options) {
             throw error;
         }
       } else {
-        COOKIES = response.cookies;
+        COOKIES = response.headers.cookies;
       }
     });
 
@@ -70,16 +70,6 @@ function retrieveData(options) {
         if (page === PAGE_COUNT) printResults(results, options);
       }
     });
-    // needle(`get`, options.url, params)
-    //   .then((response) => {
-    //     utils.logServerResponse(response);
-    //     if (response.statusCode !== 200) throw new Error();
-    //     const html = response.body;
-    //     const newItems = getAvitoData(html, options);
-    //     if (newItems.length) results = [...results, ...newItems];
-    //     if (page === PAGE_COUNT) printResults(results, options);
-    //   })
-    //   .catch((error) => {throw error});
   }
 }
 
