@@ -29,9 +29,9 @@ logUsersInfo = (users, id) => {
 }
 
 logServerResponse = (response) => {
-  console.log(utils.debug(response));
+  console.log(debug(response));
   // console.log(`СТАТУС:`, response.statusCode);
-  // console.log(`ЗАГОЛОВКИ ОТВЕТА:`, utils.debug(response.headers));
+  // console.log(`ЗАГОЛОВКИ ОТВЕТА:`, debug(response.headers));
   // console.log(`КОНТЕНТ:`, response.body);
 }
 

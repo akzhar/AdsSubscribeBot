@@ -23,11 +23,11 @@ function retrieveData(options) {
   let results = [];
   for (let page = 1; page <= PAGE_COUNT; page++) {
     results = [];
-    // const params = {
-    //   follow_max: 5, // Number of redirects to follow
-    //   proxy: `http://62.112.118.14:8080` // Russian proxy for Avito
-    // };
-    needle.get(options.url, { proxy: `http://95.105.118.172:8080` }, function(error, response) {
+    const params = {
+      follow_max: 5, // Number of redirects to follow
+      proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
+    };
+    needle.get(options.url, params, function(error, response) {
       utils.logServerResponse(response);
       if (error) throw error;
       const html = response.body;
