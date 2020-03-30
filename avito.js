@@ -37,18 +37,19 @@ function retrieveData(options) {
         switch(error.code) {
           case `ECONNRESET`:
             console.log(`ERROR CODE: ${error.code}, TIMEOUT OCCURS`);
-            page--;
+            // page--;
             break;
           default:
             throw error;
         }
       } else {
+        console.log(`ЗАГОЛОВКИ ОТВЕТА:`, debug(response.headers));
         COOKIES = response.headers.cookies;
       }
     });
 
     params.headers.cookies = COOKIES;
-    console.log(COOKIES);
+    console.log(`КУКИСЫ:`, debug(COOKIES));
 
     needle.get(url, params, function(error, response) {
       if (error) {
