@@ -5,7 +5,7 @@ const parseHTML = require(`node-html-parser`).parse;
 const SORT_BY_DATE_CODE = 104;
 const PAGE_COUNT = 3;
 // const SITE = `https://www.avito.ru`;
-const SITE = `https://avito.ru`;
+const SITE = `http://www.avito.ru`;
 const SELECTOR = {
   elem: `.item`,
   link: `.snippet-link`,
@@ -39,7 +39,7 @@ function retrieveData(options) {
         switch(error.code) {
           case `ECONNRESET`:
             console.log(`Timeout occurs`);
-            retrieveData(options);
+            // retrieveData(options);
             break;
           default:
             throw error;
