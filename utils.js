@@ -32,6 +32,7 @@ logServerResponse = (response) => {
   console.log(`СТАТУС:`, response.statusCode);
   console.log(`ЗАГОЛОВКИ ОТВЕТА:`, debug(response.headers));
   console.log(`КОНТЕНТ:`, response.body);
+  console.log(`РЕДИРЕКТ:`, response.headers.location);
 }
 
 logFrequency = (frequency) => {

@@ -23,7 +23,6 @@ function retrieveData(options) {
   let results = [];
   for (let page = 1; page <= PAGE_COUNT; page++) {
     results = [];
-    const url = `{options.url}&p=${page}`;
     const params = {
       // timeout: 50000,
       headers: {},
@@ -31,9 +30,32 @@ function retrieveData(options) {
       // follow_max: 5, // Number of redirects to follow
       proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
     };
-    let COOKIES;
-    needle.get(url, params, function(error, response) {
-      if (error) {
+    needle(`get`, options.url, params)
+      .then((response) => {
+        utils.logServerResponse(response);
+        const cookies = response.headers.cookies;
+        params.headers.cookies = cookies;
+        const redirectedURL = `${SITE}${response.headers.location}&p=${page}`;
+        needle(`get`, redirectedURL, params)
+          .then((response) => {
+            utils.logServerResponse(response);
+            const html = response.body;
+            const newItems = getAvitoData(html, options);
+            if (newItems.length) results = [...results, ...newItems];
+            if (page === PAGE_COUNT) printResults(results, options);
+          })
+          .catch((error) => {
+            switch(error.code) {
+              case `ECONNRESET`:
+                console.log(`ERROR CODE: ${error.code}, TIMEOUT OCCURS`);
+                // page--;
+                break;
+              default:
+                throw error;
+            }
+          });
+      })
+      .catch((error) => {
         switch(error.code) {
           case `ECONNRESET`:
             console.log(`ERROR CODE: ${error.code}, TIMEOUT OCCURS`);
@@ -42,35 +64,62 @@ function retrieveData(options) {
           default:
             throw error;
         }
-      } else {
-        console.log(`ЗАГОЛОВКИ ОТВЕТА:`, debug(response.headers));
-        COOKIES = response.headers.cookies;
-      }
-    });
-
-    params.headers.cookies = COOKIES;
-    console.log(`КУКИСЫ:`, debug(COOKIES));
-
-    needle.get(url, params, function(error, response) {
-      if (error) {
-        switch(error.code) {
-          case `ECONNRESET`:
-            console.log(`ERROR CODE: ${error.code}, TIMEOUT OCCURS`);
-            // retrieveData(options);
-            break;
-          default:
-            throw error;
-        }
-      } else {
-        utils.logServerResponse(response);
-        const html = response.body;
-        const newItems = getAvitoData(html, options);
-        if (newItems.length) results = [...results, ...newItems];
-        if (page === PAGE_COUNT) printResults(results, options);
-      }
-    });
+      });
   }
 }
+
+// function retrieveData(options) {
+//   // let results = [];
+//   // for (let page = 1; page <= PAGE_COUNT; page++) {
+//   //   results = [];
+//     const url = `{options.url}&p=${page}`;
+//     const params = {
+//       // timeout: 50000,
+//       headers: {},
+//       // headers: {Connection: `keep-alive`},
+//       // follow_max: 5, // Number of redirects to follow
+//       proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
+//     };
+//     let COOKIES;
+//     needle.get(url, params, function(error, response) {
+//       if (error) {
+//         switch(error.code) {
+//           case `ECONNRESET`:
+//             console.log(`ERROR CODE: ${error.code}, TIMEOUT OCCURS`);
+//             // page--;
+//             break;
+//           default:
+//             throw error;
+//         }
+//       } else {
+//         console.log(`ЗАГОЛОВКИ ОТВЕТА:`, debug(response.headers));
+//         COOKIES = response.headers.cookies;
+//       }
+//     });
+
+//     params.headers.cookies = COOKIES;
+//     console.log(`КУКИСЫ:`, debug(COOKIES));
+
+//     needle.get(url, params, function(error, response) {
+//       if (error) {
+//         switch(error.code) {
+//           case `ECONNRESET`:
+//             console.log(`ERROR CODE: ${error.code}, TIMEOUT OCCURS`);
+//             // retrieveData(options);
+//             break;
+//           default:
+//             throw error;
+//         }
+//       } else {
+//         utils.logServerResponse(response);
+//         const html = response.body;
+//         const newItems = getAvitoData(html, options);
+//         if (newItems.length) results = [...results, ...newItems];
+//         if (page === PAGE_COUNT) printResults(results, options);
+//       }
+//     });
+//   }
+// }
 
 function getAvitoData(html, options) {
   const items = parseHTML(html).querySelectorAll(SELECTOR.elem);
