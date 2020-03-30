@@ -29,13 +29,13 @@ function retrieveData(options) {
       // follow_max: 5, // Number of redirects to follow
       proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
     };
-    needle(`get`, options.url, params)
+    needle(`get`, options.url, null, params)
       .then((response) => {
         utils.logServerResponse(response);
         // const cookies = response.headers.cookies;
         // params.headers.cookies = cookies;
-        const redirectedURL = `${SITE}${response.headers.location}&p=${page}`;
-        needle(`get`, redirectedURL, params)
+        const redirectedURL = `${response.headers.location}&p=${page}`;
+        needle(`get`, redirectedURL, null, params)
           .then((response) => {
             utils.logServerResponse(response);
             const html = response.body;
