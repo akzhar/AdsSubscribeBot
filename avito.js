@@ -24,15 +24,24 @@ function retrieveData(options) {
   for (let page = 1; page <= PAGE_COUNT; page++) {
     results = [];
     const params = {
-      headers: {
-        `User-Agent`: `Chrome/59.0.3071.115`
-      },
+      // timeout: 30000,
+      // headers: {
+      //   `User-Agent`: `Chrome/59.0.3071.115`
+      // },
       follow_max: 5, // Number of redirects to follow
       proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
     };
     needle.get(options.url, params, function(error, response) {
       utils.logServerResponse(response);
-      if (error) throw error;
+      if (error) {
+        switch(error.code) {
+          case `ECONNRESET`:
+            console.log(`Timeout occurs`);
+            break;
+          default:
+            throw error;
+        }
+      }
       const html = response.body;
       const newItems = getAvitoData(html, options);
       if (newItems.length) results = [...results, ...newItems];
