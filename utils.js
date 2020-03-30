@@ -42,6 +42,7 @@ logFrequency = (frequency) => {
 logSearchResults = (count, unique) => {
   console.log(`СОБРАНО УНИКАЛЬНЫХ ОБЪЯВЛЕНИЙ:`, unique.size);
   console.log(`НОВЫХ ОБЪЯВЛЕНИЙ ПО ЗАПРОСУ:`, count);
+  logDashedline();
 }
 
 sendSearchResults = (count, bot, chatId) => {

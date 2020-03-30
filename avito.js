@@ -27,7 +27,7 @@ function retrieveData(options) {
       // headers: {},
       timeout: 50000,
       // follow_max: 5, // Number of redirects to follow
-      proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
+      proxy: `http://185.187.197.107:8080` // Russian proxy for Avito
     };
     needle(`get`, options.url, null, params)
       .then((response) => {
