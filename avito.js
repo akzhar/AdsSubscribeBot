@@ -26,9 +26,7 @@ function retrieveData(options) {
     const url = `{options.url}&p=${page}`;
     const params = {
       // timeout: 50000,
-      // headers: {
-      //   `User-Agent`: `Chrome/59.0.3071.115`
-      // },
+      headers: {},
       // headers: {Connection: `keep-alive`},
       // follow_max: 5, // Number of redirects to follow
       proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
