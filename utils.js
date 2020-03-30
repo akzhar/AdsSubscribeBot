@@ -29,10 +29,9 @@ logUsersInfo = (users, id) => {
 }
 
 logServerResponse = (response) => {
-  console.log(debug(response));
-  // console.log(`СТАТУС:`, response.statusCode);
-  // console.log(`ЗАГОЛОВКИ ОТВЕТА:`, debug(response.headers));
-  // console.log(`КОНТЕНТ:`, response.body);
+  console.log(`СТАТУС:`, response.statusCode);
+  console.log(`ЗАГОЛОВКИ ОТВЕТА:`, debug(response.headers));
+  console.log(`КОНТЕНТ:`, response.body);
 }
 
 logFrequency = (frequency) => {

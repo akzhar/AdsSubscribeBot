@@ -24,6 +24,9 @@ function retrieveData(options) {
   for (let page = 1; page <= PAGE_COUNT; page++) {
     results = [];
     const params = {
+      headers: {
+        `User-Agent`: `Chrome/59.0.3071.115`
+      },
       follow_max: 5, // Number of redirects to follow
       proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
     };
