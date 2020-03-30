@@ -5,7 +5,7 @@ const parseHTML = require(`node-html-parser`).parse;
 const SORT_BY_DATE_CODE = 104;
 const PAGE_COUNT = 3;
 // const SITE = `https://www.avito.ru`;
-const SITE = `http://www.avito.ru`;
+const SITE = `http://avito.ru`;
 const SELECTOR = {
   elem: `.item`,
   link: `.snippet-link`,
@@ -25,7 +25,7 @@ function retrieveData(options) {
   for (let page = 1; page <= PAGE_COUNT; page++) {
     results = [];
     const params = {
-      // timeout: 30000,
+      timeout: 50000,
       // headers: {
       //   `User-Agent`: `Chrome/59.0.3071.115`
       // },
@@ -35,10 +35,9 @@ function retrieveData(options) {
     };
     needle.get(options.url, params, function(error, response) {
       if (error) {
-        console.log(`ERROR CODE:`, error.code);
         switch(error.code) {
           case `ECONNRESET`:
-            console.log(`Timeout occurs`);
+            console.log(`ERROR CODE: ${error.code}, TIMEOUT OCCURS`);
             // retrieveData(options);
             break;
           default:
