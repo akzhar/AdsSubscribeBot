@@ -25,7 +25,7 @@ function retrieveData(options) {
     results = [];
     const params = {
       // headers: {},
-      // timeout: 50000,
+      timeout: 50000,
       // follow_max: 5, // Number of redirects to follow
       proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
     };
@@ -46,7 +46,7 @@ function retrieveData(options) {
           .catch((error) => {
             switch(error.code) {
               case `ECONNRESET`:
-                console.log(`ERROR CODE: ${error.code}, TIMEOUT OCCURS`);
+                console.log(`REQ 2 - ERROR CODE: ${error.code}, TIMEOUT OCCURS`);
                 // page--;
                 break;
               default:
@@ -57,7 +57,7 @@ function retrieveData(options) {
       .catch((error) => {
         switch(error.code) {
           case `ECONNRESET`:
-            console.log(`ERROR CODE: ${error.code}, TIMEOUT OCCURS`);
+            console.log(`REQ 1 - ERROR CODE: ${error.code}, TIMEOUT OCCURS`);
             // page--;
             break;
           default:
