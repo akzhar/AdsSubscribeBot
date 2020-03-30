@@ -31,12 +31,14 @@ function retrieveData(options) {
     };
     needle(`get`, options.url, null, params)
       .then((response) => {
+        console.log(`ANSWER RECIEVED - REQ 1`);
         utils.logServerResponse(response);
         // const cookies = response.headers.cookies;
         // params.headers.cookies = cookies;
         const redirectedURL = `${response.headers.location}&p=${page}`;
         needle(`get`, redirectedURL, null, params)
           .then((response) => {
+            console.log(`ANSWER RECIEVED - REQ 2`);
             utils.logServerResponse(response);
             const html = response.body;
             const newItems = getAvitoData(html, options);
