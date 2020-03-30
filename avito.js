@@ -49,7 +49,7 @@ function retrieveData(options) {
       }
     });
 
-    params.cookies = COOKIES;
+    params.headers.cookies = COOKIES;
     console.log(COOKIES);
 
     needle.get(url, params, function(error, response) {
