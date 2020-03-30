@@ -28,10 +28,13 @@ function retrieveData(options) {
       // headers: {
       //   `User-Agent`: `Chrome/59.0.3071.115`
       // },
+      headers: {Connection: `keep-alive`},
       follow_max: 5, // Number of redirects to follow
       proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
     };
     needle.get(options.url, params, function(error, response) {
+      console.log(error);
+      console.log(response);
       utils.logServerResponse(response);
       if (error) {
         switch(error.code) {
