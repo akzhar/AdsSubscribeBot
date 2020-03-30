@@ -42,12 +42,13 @@ function retrieveData(options) {
           default:
             throw error;
         }
+      } else {
+        utils.logServerResponse(response);
+        const html = response.body;
+        const newItems = getAvitoData(html, options);
+        if (newItems.length) results = [...results, ...newItems];
+        if (page === PAGE_COUNT) printResults(results, options);
       }
-      utils.logServerResponse(response);
-      const html = response.body;
-      const newItems = getAvitoData(html, options);
-      if (newItems.length) results = [...results, ...newItems];
-      if (page === PAGE_COUNT) printResults(results, options);
     });
     // needle(`get`, options.url, params)
     //   .then((response) => {
