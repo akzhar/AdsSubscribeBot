@@ -24,17 +24,16 @@ function retrieveData(options) {
   for (let page = 1; page <= PAGE_COUNT; page++) {
     results = [];
     const params = {
+      // headers: {},
       // timeout: 50000,
-      headers: {},
-      // headers: {Connection: `keep-alive`},
       // follow_max: 5, // Number of redirects to follow
       proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
     };
     needle(`get`, options.url, params)
       .then((response) => {
         utils.logServerResponse(response);
-        const cookies = response.headers.cookies;
-        params.headers.cookies = cookies;
+        // const cookies = response.headers.cookies;
+        // params.headers.cookies = cookies;
         const redirectedURL = `${SITE}${response.headers.location}&p=${page}`;
         needle(`get`, redirectedURL, params)
           .then((response) => {
