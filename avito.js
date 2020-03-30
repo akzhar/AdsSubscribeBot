@@ -33,8 +33,8 @@ function retrieveData(options) {
       proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
     };
     needle.get(options.url, params, function(error, response) {
-      console.log(`ERROR CODE:`, error.code);
       if (error) {
+        console.log(`ERROR CODE:`, error.code);
         switch(error.code) {
           case `ECONNRESET`:
             console.log(`Timeout occurs`);
