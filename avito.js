@@ -2,9 +2,10 @@ const utils = require(`./utils.js`);
 const needle = require(`needle`);
 const parseHTML = require(`node-html-parser`).parse;
 
-const BY_DATE_CODE = 104;
+const SORT_BY_DATE_CODE = 104;
 const PAGE_COUNT = 3;
-const SITE = `https://www.avito.ru`;
+// const SITE = `https://www.avito.ru`;
+const SITE = `https://avito.ru`;
 const SELECTOR = {
   elem: `.item`,
   link: `.snippet-link`,
@@ -16,7 +17,7 @@ const SELECTOR = {
 
 function getURL(config) {
   const lastParam = (config.type) ? `/${config.type}` : ``;
-  return `${SITE}/${config.city}/${config.category}/prodam/${config.obj}${lastParam}?cd=1&pmax=${config.pmax}&pmin=${config.pmin}&s=${BY_DATE_CODE}`
+  return `${SITE}/${config.city}/${config.category}/prodam/${config.obj}${lastParam}?cd=1&pmax=${config.pmax}&pmin=${config.pmin}&s=${SORT_BY_DATE_CODE}`
 }
 
 function retrieveData(options) {
@@ -28,8 +29,8 @@ function retrieveData(options) {
       // headers: {
       //   `User-Agent`: `Chrome/59.0.3071.115`
       // },
-      headers: {Connection: `keep-alive`},
-      follow_max: 5, // Number of redirects to follow
+      // headers: {Connection: `keep-alive`},
+      // follow_max: 5, // Number of redirects to follow
       proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
     };
     needle.get(options.url, params, function(error, response) {
@@ -38,6 +39,7 @@ function retrieveData(options) {
         switch(error.code) {
           case `ECONNRESET`:
             console.log(`Timeout occurs`);
+            retrieveData(options);
             break;
           default:
             throw error;
