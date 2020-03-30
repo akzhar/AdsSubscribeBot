@@ -4,8 +4,7 @@ const parseHTML = require(`node-html-parser`).parse;
 
 const SORT_BY_DATE_CODE = 104;
 const PAGE_COUNT = 3;
-// const SITE = `https://www.avito.ru`;
-const SITE = `http://avito.ru`;
+const SITE = `https://www.avito.ru`;
 const SELECTOR = {
   elem: `.item`,
   link: `.snippet-link`,
@@ -24,8 +23,9 @@ function retrieveData(options) {
   let results = [];
   for (let page = 1; page <= PAGE_COUNT; page++) {
     results = [];
+    const url = `{options.url}&p=${page}`;
     const params = {
-      timeout: 50000,
+      // timeout: 50000,
       // headers: {
       //   `User-Agent`: `Chrome/59.0.3071.115`
       // },
@@ -33,7 +33,26 @@ function retrieveData(options) {
       // follow_max: 5, // Number of redirects to follow
       proxy: `http://95.105.118.172:8080` // Russian proxy for Avito
     };
-    needle.get(options.url, params, function(error, response) {
+    let COOKIES;
+    needle.get(url, params, function(error, response) {
+      if (error) {
+        switch(error.code) {
+          case `ECONNRESET`:
+            console.log(`ERROR CODE: ${error.code}, TIMEOUT OCCURS`);
+            page--;
+            break;
+          default:
+            throw error;
+        }
+      } else {
+        COOKIES = response.cookies;
+      }
+    });
+
+    params.cookies = COOKIES;
+    console.log(COOKIES);
+
+    needle.get(url, params, function(error, response) {
       if (error) {
         switch(error.code) {
           case `ECONNRESET`:
