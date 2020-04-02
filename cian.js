@@ -2,18 +2,17 @@ const jsdom = require(`jsdom`);
 const { JSDOM } = jsdom;
 
 const SELECTOR = {
-  elem: `.item`,
-  link: `.snippet-link`,
-  date: `.snippet-date-info`,
-  price: `.snippet-price`
+  elem: `div[class*=--main--]`,
+  link: `a[class*=--header--]`,
+  date: `div[class*=--relative--]`,
+  price: `div[class*=--header--]`
 };
-const SORTBY_CODE = 104;
 
-function getAvitoUrl(url, page) {
-  return `${url}&s=${SORTBY_CODE}&p=${page}`;
+function getCianUrl(url, page) {
+  return `${url}&p=${page}`;
 }
 
-function getAvitoNewItems(html, knownAds) {
+function getCianNewItems(html, knownAds) {
   const dom = new JSDOM(html);
   const items = dom.window.document.querySelectorAll(SELECTOR.elem);
   let newItems = [];
@@ -44,9 +43,7 @@ function getNewItem(item, knownAds) {
 }
 
 function getItemLink(item) {
-  const SITE = `https://www.avito.ru`;
-  const link = item.querySelector(SELECTOR.link).href;
-  return `${SITE}${link}`;
+  return item.querySelector(SELECTOR.link).href;
 }
 
 function getItemDate(item) {
@@ -57,9 +54,9 @@ function getItemPrice(item) {
   return item.querySelector(SELECTOR.price).innerHTML.trim();
 }
 
-const avito = {
-  getAvitoUrl: getAvitoUrl,
-  getAvitoNewItems: getAvitoNewItems
+const cian = {
+  getCianUrl: getCianUrl,
+  getCianNewItems: getCianNewItems
 };
 
-module.exports = avito;
+module.exports = cian;
