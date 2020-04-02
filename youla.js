@@ -2,18 +2,18 @@ const jsdom = require(`jsdom`);
 const { JSDOM } = jsdom;
 
 const SELECTOR = {
-  elem: `.item`,
-  link: `.snippet-link`,
-  date: `.snippet-date-info`,
-  price: `.snippet-price`
+  elem: `div[class^=SerpSnippet_snippetContent__]`,
+  link: `a[class^=SerpSnippet_name__]`,
+  date: `div[class^=SerpSnippet_actualDate__]`,
+  price: `div[class^=SerpSnippet_price__]`
 };
-const SORTBY_DATE_PARAM = `&s=104`;
+const SORTBY_DATE_PARAM = `&searchOrder=3`;
 
-function getAvitoUrl(url, page) {
-  return `${url}${SORTBY_DATE_PARAM}&p=${page}`;
+function getYoulaUrl(url, page) {
+  return `${url}${SORTBY_DATE_PARAM}&page=${page}`;
 }
 
-function getAvitoNewItems(html, knownAds) {
+function getYoulaNewItems(html, knownAds) {
   const dom = new JSDOM(html);
   const items = dom.window.document.querySelectorAll(SELECTOR.elem);
   let newItems = [];
@@ -44,22 +44,22 @@ function getNewItem(item, knownAds) {
 }
 
 function getItemLink(item) {
-  const SITE = `https://www.avito.ru`;
-  const link = item.querySelector(SELECTOR.link).href;
-  return `${SITE}${link}`;
+  return item.querySelector(SELECTOR.link).href;
 }
 
 function getItemDate(item) {
-  return item.querySelector(SELECTOR.date).innerHTML.trim();
+  const del = `Обновлено<!-- --> <!-- -->`;
+  const date = item.querySelector(SELECTOR.date).innerHTML.trim();
+  return date.replace(del, ``)
 }
 
 function getItemPrice(item) {
-  return item.querySelector(SELECTOR.price).innerHTML.trim();
+  return item.querySelector(SELECTOR.price).innerHTML.trim() + ` ₽`;
 }
 
-const avito = {
-  getAvitoUrl: getAvitoUrl,
-  getAvitoNewItems: getAvitoNewItems
+const youla = {
+  getYoulaUrl: getYoulaUrl,
+  getYoulaNewItems: getYoulaNewItems
 };
 
-module.exports = avito;
+module.exports = youla;

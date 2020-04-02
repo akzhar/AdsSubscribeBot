@@ -2,18 +2,19 @@ const jsdom = require(`jsdom`);
 const { JSDOM } = jsdom;
 
 const SELECTOR = {
-  elem: `.item`,
-  link: `.snippet-link`,
-  date: `.snippet-date-info`,
-  price: `.snippet-price`
+  elem: `a[class=_1X0Y9]`,
+  // link: `=== elem`,
+  date: `div[class^=date-]`,
+  price: `p[class^=price-]`
 };
-const SORTBY_DATE_PARAM = `&s=104`;
+const SORTBY_DATE_PARAM = `&sort=published`;
 
-function getAvitoUrl(url, page) {
-  return `${url}${SORTBY_DATE_PARAM}&p=${page}`;
+function getDomclickUrl(url, page) {
+  const limit = url.match(/(?<=limit=)\d+/)[0];
+  return `${url}${SORTBY_DATE_PARAM}&offset=${page * limit}`;
 }
 
-function getAvitoNewItems(html, knownAds) {
+function getDomclickNewItems(html, knownAds) {
   const dom = new JSDOM(html);
   const items = dom.window.document.querySelectorAll(SELECTOR.elem);
   let newItems = [];
@@ -44,9 +45,8 @@ function getNewItem(item, knownAds) {
 }
 
 function getItemLink(item) {
-  const SITE = `https://www.avito.ru`;
-  const link = item.querySelector(SELECTOR.link).href;
-  return `${SITE}${link}`;
+  const SITE = `https://www.domclick.ru`;
+  return `${SITE}${item.href}`;
 }
 
 function getItemDate(item) {
@@ -57,9 +57,9 @@ function getItemPrice(item) {
   return item.querySelector(SELECTOR.price).innerHTML.trim();
 }
 
-const avito = {
-  getAvitoUrl: getAvitoUrl,
-  getAvitoNewItems: getAvitoNewItems
+const domclick = {
+  getDomclickUrl: getDomclickUrl,
+  getDomclickNewItems: getDomclickNewItems
 };
 
-module.exports = avito;
+module.exports = domclick;

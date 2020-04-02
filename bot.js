@@ -1,16 +1,19 @@
 // process.binding('http_parser').HTTPParser = require('http-parser-js').HTTPParser;
-
 const utils = require(`./utils.js`);
 const log = require(`./log.js`);
 const https = require('https');
-const avito = require(`./avito.js`);
-const cian = require(`./cian.js`);
 const telegramBot = require(`node-telegram-bot-api`);
 const fs = require(`fs`);
 // off to deploy, on to local
 const agent = require('socks5-https-client/lib/Agent');
 
-const PROXY_TO_TLGR = `185.62.58.208:10234`; // запрос через иностранный прокси на Telegram
+const USERS = {};
+const PAGE_COUNT = 3;
+const MIN = 60000; // ms
+const TEXT_START = fs.readFileSync(`textStart.txt`, `utf8`).trim();
+const TEXT_HELP = fs.readFileSync(`textHelp.txt`, `utf8`).trim();
+
+const PROXY_TO_TLGR = `78.46.218.20:31288`; // запрос через иностранный прокси на Telegram
 // российсике прокси выдают 502 и 301 статус, другие блокируются avito
 // const PROXY_TO_SITE = `193.38.51.75:33281`; // запрос через Российский прокси на авито и циан
 
@@ -32,17 +35,6 @@ const BOT_REQUEST = {
   }
 };
 
-const USERS = {};
-const PAGE_COUNT = 3;
-const MIN = 60000; // ms
-const REGEXP_URL_AVITO = /^(https?:\/\/)?(www\.)?avito\.ru\/.+$/;
-const REGEXP_URL_CIAN = /^(https?:\/\/)?(.+\.)?cian\.ru\/.+$/;
-const REGEXP_SHOW_REQUESTS = /^\/show\s(avito|cian)$/;
-const REGEXP_ADD_REQUEST = /^\/add\s\S+$/;
-const REGEXP_STOP_REQUEST = /^\/stop\s(avito|cian)\s\S+$/;
-const REGEXP_NUMBER = /^\d+$/;
-const TEXT_START = fs.readFileSync(`textStart.txt`, `utf8`).trim();
-const TEXT_HELP = fs.readFileSync(`textHelp.txt`, `utf8`).trim();
 const BOT_OPTIONS = {
   request: BOT_REQUEST, // off to deploy, on to local
   polling: true // off to deploy, on to local
@@ -67,25 +59,48 @@ function User(name) {
   },
   this.requests = {
     avito : {},
-    cian: {}
+    cian: {},
+    youla: {},
+    domofond: {},
+    domclick: {}
   }
 }
 
+const avito = require(`./avito.js`);
+const cian = require(`./cian.js`);
+const youla = require(`./youla.js`);
+const domofond = require(`./domofond.js`);
+const domclick = require(`./domclick.js`);
+
+const REGEXP_ADD_REQUEST = /^\/add\s\S+$/;
+const REGEXP_NUMBER = /^\d+$/;
+const REGEXP_SHOW_REQUESTS = /^\/show\s(avito|cian|youla|domofond|domclick)$/;
+const REGEXP_STOP_REQUEST = /^\/stop\s(avito|cian|youla|domofond|domclick)\s\S+$/;
+const REGEXP_URL = /^(https?:\/\/)?(.+\.)?(avito|cian|youla|domofond|domclick)\.ru\/.+$/;
+
 function defineSite(requestUrl) {
-  // youla.ru, domclick.ru, domofond.ru
   if (requestUrl.indexOf(`avito.ru`) !== -1) return `avito`;
   if (requestUrl.indexOf(`cian.ru`) !== -1) return `cian`;
+  if (requestUrl.indexOf(`youla.ru`) !== -1) return `youla`;
+  if (requestUrl.indexOf(`domofond.ru`) !== -1) return `domofond`;
+  if (requestUrl.indexOf(`domclick.ru`) !== -1) return `domclick`;
   return `unknown`;
 }
 
 function getSiteUrl(siteName, url, page) {
   if (siteName === `avito`) return avito.getAvitoUrl(url, page);
   if (siteName === `cian`) return cian.getCianUrl(url, page);
+  if (siteName === `youla`) return youla.getYoulaUrl(url, page);
+  if (siteName === `domofond`) return domofond.getDomofondUrl(url, page);
+  if (siteName === `domclick`) return domclick.getDomclickUrl(url, page);
 }
 
 function getSiteNewItems(siteName, html, knownAds) {
   if (siteName === `avito`) return avito.getAvitoNewItems(html, knownAds);
   if (siteName === `cian`) return cian.getCianNewItems(html, knownAds);
+  if (siteName === `youla`) return youla.getYoulaNewItems(html, knownAds);
+  if (siteName === `domofond`) return domofond.getDomofondNewItems(html, knownAds);
+  if (siteName === `domclick`) return domclick.getDomclickNewItems(html, knownAds);
 }
 
 bot.on(`polling_error`, (error) => console.log(`Polling error: ${error}`));
@@ -110,7 +125,7 @@ bot.on(`message`, (msg) => {
     const requestName = userText.slice(`/add `.length);
     USERS[userId].newRequest.name = requestName;
     bot.sendMessage(userId, `ОК. Пришли мне ссылку для запроса <b>${requestName}</b>...`, { parse_mode: `HTML` });
-  } else if (REGEXP_URL_AVITO.test(userText) || REGEXP_URL_CIAN.test(userText)) { // ввод адреса запроса
+  } else if (REGEXP_URL.test(userText)) { // ввод адреса запроса
     const requestUrl = userText;
     const siteName = defineSite(requestUrl);
     if (siteName === `unknown`) {
