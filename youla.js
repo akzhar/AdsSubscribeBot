@@ -12,7 +12,7 @@ const SORTBY_DATE_PARAM = `searchOrder=3`;
 function getYoulaUrl(url, page) {
   if (url.includes(`?`)) {
     url = `${url}&${SORTBY_DATE_PARAM}`;
-  else {
+  } else {
     if (url[url.length - 1] !== `/`) url = `${url}/`;
     url = `${url}?${SORTBY_DATE_PARAM}`;
   }

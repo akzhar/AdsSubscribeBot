@@ -11,7 +11,7 @@ const SELECTOR = {
 function getCianUrl(url, page) {
   if (url.includes(`?`)) {
     url = `${url}&`;
-  else {
+  } else {
     if (url[url.length - 1] !== `/`) url = `${url}/`;
     url = `${url}?`;
   }
