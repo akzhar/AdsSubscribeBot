@@ -16,7 +16,7 @@ if (isDeploy) {
       host: `0.0.0.0`
     }
   };
-  botHook = `${externalUrl}:${botOptions.webHook.port}/bot${token}`;
+  botHook = `${externalUrl}:443/bot${token}`;
 } else {
   const proxyToTelegram = fs.readFileSync(`proxyToTelegram.txt`, `utf8`).trim(); // запрос через иностранный прокси на Telegram
   botOptions = {
