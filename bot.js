@@ -72,6 +72,7 @@ const youla = require(`./youla.js`);
 const domofond = require(`./domofond.js`);
 const domclick = require(`./domclick.js`);
 
+const AVAILABLE_SITES = `Avito, Cian, Youla, Domofond, Domclick`;
 const REGEXP_ADD_REQUEST = /^\/add\s\S+$/;
 const REGEXP_NUMBER = /^\d+$/;
 const REGEXP_SHOW_REQUESTS = /^\/show\s(avito|cian|youla|domofond|domclick)$/;
@@ -124,7 +125,7 @@ bot.on(`message`, (msg) => {
   } else if (REGEXP_ADD_REQUEST.test(userText)) { // ввод команды /add имя_запроса - добавление нового запроса
     const requestName = userText.slice(`/add `.length);
     USERS[userId].newRequest.name = requestName;
-    bot.sendMessage(userId, `ОК. Пришли мне ссылку для запроса <b>${requestName}</b>...`, { parse_mode: `HTML` });
+    bot.sendMessage(userId, `ОК. Пришли мне ссылку для запроса <b>${requestName}</b>...\n${AVAILABLE_SITES}`, { parse_mode: `HTML` });
   } else if (REGEXP_URL.test(userText)) { // ввод адреса запроса
     const requestUrl = userText;
     const siteName = defineSite(requestUrl);
@@ -175,7 +176,7 @@ bot.on(`message`, (msg) => {
 });
 
 function doSiteRequest(siteName, requestName, userId) {
-  if (USERS.hasOwnProperty(userId)) {
+  if (USERS.hasOwnProperty(userId) && USERS[userId].requests[siteName].hasOwnProperty(requestName) {
     const request = USERS[userId].requests[siteName][requestName];
     request.iterations++;
     const options = {
@@ -193,6 +194,8 @@ function doSiteRequest(siteName, requestName, userId) {
 }
 
 function retrieveSiteData(options) {
+  // cian, youla, domofond, domclick - OK
+  // avito без прокси через heroku выдает 403, Forbidden
   // const requestOptions = {
   //   proxy: `http://${PROXY_TO_SITE}`
   // };

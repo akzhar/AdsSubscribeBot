@@ -10,8 +10,9 @@ const SELECTOR = {
 const SORTBY_DATE_PARAM = `&sort=published`;
 
 function getDomclickUrl(url, page) {
-  const limit = url.match(/(?<=limit=)\d+/)[0];
-  return `${url}${SORTBY_DATE_PARAM}&offset=${page * limit}`;
+  // const limit = url.match(/(?<=limit=)\d+/)[0];
+  // return `${url}${SORTBY_DATE_PARAM}&offset=${page * limit}`;
+  return `${url}${SORTBY_DATE_PARAM}&offset=${page * 20}&limit=${page * 20}`;
 }
 
 function getDomclickNewItems(html, knownAds) {
