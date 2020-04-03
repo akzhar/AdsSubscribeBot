@@ -176,7 +176,7 @@ bot.on(`message`, (msg) => {
 });
 
 function doSiteRequest(siteName, requestName, userId) {
-  if (USERS.hasOwnProperty(userId) && USERS[userId].requests[siteName].hasOwnProperty(requestName) {
+  if (USERS.hasOwnProperty(userId) && USERS[userId].requests[siteName].hasOwnProperty(requestName)) {
     const request = USERS[userId].requests[siteName][requestName];
     request.iterations++;
     const options = {
