@@ -4,7 +4,7 @@ const https = require('https');
 const telegramBot = require(`node-telegram-bot-api`);
 const fs = require(`fs`);
 // off to deploy, on to local
-const agent = require('socks5-https-client/lib/Agent');
+// const agent = require('socks5-https-client/lib/Agent');
 
 const USERS = {};
 const PAGE_COUNT = 3;
@@ -12,35 +12,37 @@ const MIN = 60000; // ms
 const TEXT_START = fs.readFileSync(`textStart.txt`, `utf8`).trim();
 const TEXT_HELP = fs.readFileSync(`textHelp.txt`, `utf8`).trim();
 const PROXY_TO_TLGR = fs.readFileSync(`proxyToTelegram.txt`, `utf8`).trim(); // запрос через иностранный прокси на Telegram
+
 // российсике прокси выдают 502 и 301 статус, другие блокируются avito
 // const PROXY_TO_SITE = `193.38.51.75:33281`; // запрос через Российский прокси на авито и циан
 
 // on to deploy, off to local
-// const PORT = process.env.PORT || 443;
-// const HOST = `0.0.0.0`;
-// const EXTERNAL_URL = process.env.CUSTOM_ENV_VARIABLE || 'https://tranquil-ravine-43566.herokuapp.com'
-// const BOT_WEBHOOKS = {
-//   port: PORT,
-//   host: HOST
-// };
-
-// off to deploy, on to local
-const BOT_REQUEST = {
-  agentClass: agent,
-  agentOptions: {
-    socksHost: PROXY_TO_TLGR.slice(0, PROXY_TO_TLGR.indexOf(`:`)),
-    socksPort: +PROXY_TO_TLGR.slice(PROXY_TO_TLGR.indexOf(`:`) + 1)
-  }
+const PORT = process.env.PORT || 443;
+const HOST = `0.0.0.0`;
+const EXTERNAL_URL = process.env.CUSTOM_ENV_VARIABLE || 'https://tranquil-ravine-43566.herokuapp.com'
+const BOT_WEBHOOKS = {
+  port: PORT,
+  host: HOST
 };
 
+// off to deploy, on to local
+// const BOT_REQUEST = {
+//   agentClass: agent,
+//   agentOptions: {
+//     socksHost: PROXY_TO_TLGR.slice(0, PROXY_TO_TLGR.indexOf(`:`)),
+//     socksPort: +PROXY_TO_TLGR.slice(PROXY_TO_TLGR.indexOf(`:`) + 1)
+//   }
+// };
+
 const BOT_OPTIONS = {
-  request: BOT_REQUEST, // off to deploy, on to local
-  polling: true // off to deploy, on to local
-  // webHook: BOT_WEBHOOKS // on to deploy, off to local
+  // request: BOT_REQUEST, // off to deploy, on to local
+  // polling: true // off to deploy, on to local
+  webHook: BOT_WEBHOOKS // on to deploy, off to local
 };
 const TOKEN = fs.readFileSync(`token.txt`, `utf8`).trim();
 const bot = new telegramBot(TOKEN, BOT_OPTIONS);
-// bot.setWebHook(`${EXTERNAL_URL}:443/bot${TOKEN}`); // on to deploy, off to local
+// on to deploy, off to local
+bot.setWebHook(`${EXTERNAL_URL}:443/bot${TOKEN}`);
 
 function Request() {
   this.url = ``,
