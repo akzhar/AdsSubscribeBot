@@ -1,48 +1,34 @@
-const utils = require(`./utils.js`);
-const log = require(`./log.js`);
 const https = require('https');
 const telegramBot = require(`node-telegram-bot-api`);
 const fs = require(`fs`);
-// off to deploy, on to local
-// const agent = require('socks5-https-client/lib/Agent');
+const utils = require(`./utils.js`);
+const log = require(`./log.js`);
+const config = require(`./config.js`);
+const avito = require(`./avito.js`);
+const cian = require(`./cian.js`);
+const youla = require(`./youla.js`);
+const domofond = require(`./domofond.js`);
+const domclick = require(`./domclick.js`);
 
+const AVAILABLE_SITES = `Avito, Cian, Youla, Domofond, Domclick`;
+const REGEXP_ADD_REQUEST = /^\/add\s\S+$/;
+const REGEXP_NUMBER = /^\d+$/;
+const REGEXP_SHOW_REQUESTS = /^\/show\s(avito|cian|youla|domofond|domclick)$/;
+const REGEXP_STOP_REQUEST = /^\/stop\s(avito|cian|youla|domofond|domclick)\s\S+$/;
+const REGEXP_URL = /^(https?:\/\/)?(.+\.)?(avito|cian|youla|domofond|domclick)\.ru\/.+$/;
 const USERS = {};
 const PAGE_COUNT = 3;
 const MIN = 60000; // ms
 const TEXT_START = fs.readFileSync(`textStart.txt`, `utf8`).trim();
 const TEXT_HELP = fs.readFileSync(`textHelp.txt`, `utf8`).trim();
-const PROXY_TO_TLGR = fs.readFileSync(`proxyToTelegram.txt`, `utf8`).trim(); // запрос через иностранный прокси на Telegram
 
-// российсике прокси выдают 502 и 301 статус, другие блокируются avito
-// const PROXY_TO_SITE = `193.38.51.75:33281`; // запрос через Российский прокси на авито и циан
+const token = fs.readFileSync(`token.txt`, `utf8`).trim();
+const botOptions = config.botOptions;
+const bot = new telegramBot(token, botOptions);
 
-// on to deploy, off to local
-const PORT = process.env.PORT || 443;
-const HOST = `0.0.0.0`;
-const EXTERNAL_URL = process.env.CUSTOM_ENV_VARIABLE || 'https://tranquil-ravine-43566.herokuapp.com'
-const BOT_WEBHOOKS = {
-  port: PORT,
-  host: HOST
-};
-
-// off to deploy, on to local
-// const BOT_REQUEST = {
-//   agentClass: agent,
-//   agentOptions: {
-//     socksHost: PROXY_TO_TLGR.slice(0, PROXY_TO_TLGR.indexOf(`:`)),
-//     socksPort: +PROXY_TO_TLGR.slice(PROXY_TO_TLGR.indexOf(`:`) + 1)
-//   }
-// };
-
-const BOT_OPTIONS = {
-  // request: BOT_REQUEST, // off to deploy, on to local
-  // polling: true // off to deploy, on to local
-  webHook: BOT_WEBHOOKS // on to deploy, off to local
-};
-const TOKEN = fs.readFileSync(`token.txt`, `utf8`).trim();
-const bot = new telegramBot(TOKEN, BOT_OPTIONS);
-// on to deploy, off to local
-bot.setWebHook(`${EXTERNAL_URL}:443/bot${TOKEN}`);
+if (config.isDeploy) {
+  bot.setWebHook(BOT_HOOK);
+}
 
 function Request() {
   this.url = ``,
@@ -65,19 +51,6 @@ function User(name) {
     domclick: {}
   }
 }
-
-const avito = require(`./avito.js`);
-const cian = require(`./cian.js`);
-const youla = require(`./youla.js`);
-const domofond = require(`./domofond.js`);
-const domclick = require(`./domclick.js`);
-
-const AVAILABLE_SITES = `Avito, Cian, Youla, Domofond, Domclick`;
-const REGEXP_ADD_REQUEST = /^\/add\s\S+$/;
-const REGEXP_NUMBER = /^\d+$/;
-const REGEXP_SHOW_REQUESTS = /^\/show\s(avito|cian|youla|domofond|domclick)$/;
-const REGEXP_STOP_REQUEST = /^\/stop\s(avito|cian|youla|domofond|domclick)\s\S+$/;
-const REGEXP_URL = /^(https?:\/\/)?(.+\.)?(avito|cian|youla|domofond|domclick)\.ru\/.+$/;
 
 function defineSite(requestUrl) {
   if (requestUrl.indexOf(`avito.ru`) !== -1) return `avito`;
@@ -145,7 +118,7 @@ bot.on(`message`, (msg) => {
     if (newRequestName && newRequestSite) {
       const frequency = +userText;
       USERS[userId].requests[newRequestSite][newRequestName].frequency = frequency;
-      bot.sendMessage(userId, `Готово. Запрос <b>${newRequestName}</b> на сайт <b>${newRequestSite}</b> добавлен.\nОповещение раз в <b>${frequency}</b> мин.`, { parse_mode: `HTML` });
+      bot.sendMessage(userId, `Готово. Запрос <b>${newRequestName}</b> на сайт <b>${newRequestSite}</b> добавлен.\nЯ просканировал <b>3</b> первые страницы.\nОповещение раз в <b>${frequency}</b> мин.`, { parse_mode: `HTML` });
       log.requests(USERS, newRequestSite, userId);
       doSiteRequest(newRequestSite, newRequestName, userId);
     }
@@ -193,6 +166,9 @@ function doSiteRequest(siteName, requestName, userId) {
   }
 }
 
+// российсике прокси выдают 502 и 301 статус, другие блокируются avito
+// const PROXY_TO_SITE = `193.38.51.75:33281`; // запрос через Российский прокси на авито и циан
+
 function retrieveSiteData(options) {
   // cian, youla, domofond, domclick - OK
   // avito без прокси через heroku выдает 403, Forbidden
@@ -233,7 +209,7 @@ function retrieveSiteData(options) {
 }
 
 function printResults(results, options) {
-  bot.sendMessage(options.userId, `<b>${(results.length) ? results.length : 0}</b> новых объявлений с сайта <b>${options.siteName}</b> по запросу <b>${options.requestName}</b> \n<u>Всего по запросу бот запомнил объявлений:</u> <b>${options.knownAds.size}</b>\nСледующая проверка через <b>${options.frequency}</b> мин.`, { parse_mode: `HTML` });
+  bot.sendMessage(options.userId, `<b>${(results.length) ? results.length : 0}</b> новых объявлений с сайта <b>${options.siteName}</b> по запросу <b>${options.requestName}</b> \nВсего по запросу бот запомнил <b>${options.knownAds.size}</b> уникальных объявлений\nСледующая проверка через <b>${options.frequency}</b> мин.`, { parse_mode: `HTML` });
   log.next(options.requestName, options.frequency);
   if (results.length) {
     setTimeout(() => {
