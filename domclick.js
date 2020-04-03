@@ -7,11 +7,11 @@ const SELECTOR = {
   date: `div[class^=date-]`,
   price: `p[class^=price-]`
 };
-const SORTBY_DATE_PARAM = `&sort=published`;
+const SORTBY_DATE_PARAM = `sort=published`;
 
 function getDomclickUrl(url, page) {
-  if (!url.includes(`?`)) url = `${url}?`;
-  return `${url}${SORTBY_DATE_PARAM}&offset=${page * 30}&limit=${30}`;
+  url = (url.includes(`?`)) ? `${url}&${SORTBY_DATE_PARAM}` : `${url}?${SORTBY_DATE_PARAM}`;
+  return `${url}&offset=${page * 30}&limit=${30}`;
 }
 
 function getDomclickNewItems(html, knownAds) {

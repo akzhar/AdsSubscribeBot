@@ -7,11 +7,11 @@ const SELECTOR = {
   date: `span[class^=long-item-card__listDate]`,
   price: `span[class^=long-item-card__price]`
 };
-const SORTBY_DATE_PARAM = `&SortOrder=Newest`;
+const SORTBY_DATE_PARAM = `SortOrder=Newest`;
 
 function getDomofondUrl(url, page) {
-  if (!url.includes(`?`)) url = `${url}?`;
-  return `${url}${SORTBY_DATE_PARAM}&Page=${page}`;
+  url = (url.includes(`?`)) ? `${url}&${SORTBY_DATE_PARAM}` : `${url}?${SORTBY_DATE_PARAM}`;
+  return `${url}&Page=${page}`;
 }
 
 function getDomofondNewItems(html, knownAds) {

@@ -7,11 +7,11 @@ const SELECTOR = {
   date: `.snippet-date-info`,
   price: `.snippet-price`
 };
-const SORTBY_DATE_PARAM = `&s=104`;
+const SORTBY_DATE_PARAM = `s=104`;
 
 function getAvitoUrl(url, page) {
-  if (!url.includes(`?`)) url = `${url}?`;
-  return `${url}${SORTBY_DATE_PARAM}&p=${page}`;
+  url = (url.includes(`?`)) ? `${url}&${SORTBY_DATE_PARAM}` : `${url}?${SORTBY_DATE_PARAM}`;
+  return `${url}&p=${page}`;
 }
 
 function getAvitoNewItems(html, knownAds) {

@@ -7,11 +7,11 @@ const SELECTOR = {
   date: `div[class^=SerpSnippet_actualDate__]`,
   price: `div[class^=SerpSnippet_price__]`
 };
-const SORTBY_DATE_PARAM = `&searchOrder=3`;
+const SORTBY_DATE_PARAM = `searchOrder=3`;
 
 function getYoulaUrl(url, page) {
-  if (!url.includes(`?`)) url = `${url}?`;
-  return `${url}${SORTBY_DATE_PARAM}&page=${page}`;
+  url = (url.includes(`?`)) ? `${url}&${SORTBY_DATE_PARAM}` : `${url}?${SORTBY_DATE_PARAM}`;
+  return `${url}&page=${page}`;
 }
 
 function getYoulaNewItems(html, knownAds) {

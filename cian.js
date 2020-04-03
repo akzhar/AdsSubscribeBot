@@ -9,8 +9,8 @@ const SELECTOR = {
 };
 
 function getCianUrl(url, page) {
-  if (!url.includes(`?`)) url = `${url}?`;
-  return `${url}&p=${page}`;
+  url = (url.includes(`?`)) ? `${url}&` : `${url}?`;
+  return `${url}p=${page}`;
 }
 
 function getCianNewItems(html, knownAds) {
