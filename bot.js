@@ -1,4 +1,3 @@
-// process.binding('http_parser').HTTPParser = require('http-parser-js').HTTPParser;
 const utils = require(`./utils.js`);
 const log = require(`./log.js`);
 const https = require('https');
@@ -12,8 +11,7 @@ const PAGE_COUNT = 3;
 const MIN = 60000; // ms
 const TEXT_START = fs.readFileSync(`textStart.txt`, `utf8`).trim();
 const TEXT_HELP = fs.readFileSync(`textHelp.txt`, `utf8`).trim();
-
-const PROXY_TO_TLGR = `78.46.218.20:31288`; // запрос через иностранный прокси на Telegram
+const PROXY_TO_TLGR = fs.readFileSync(`proxyToTelegram.txt`, `utf8`).trim(); // запрос через иностранный прокси на Telegram
 // российсике прокси выдают 502 и 301 статус, другие блокируются avito
 // const PROXY_TO_SITE = `193.38.51.75:33281`; // запрос через Российский прокси на авито и циан
 

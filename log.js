@@ -16,7 +16,7 @@ users = (usersObj) => {
 }
 
 msg = (msg) => {
-  console.log(`Бот получил сообщение от пользователя ${msg.from.first_name} [${msg.from.id}]: '${msg.text.trim()}'`);
+  console.log(`${utils.getTimestamp()} - Бот получил сообщение от пользователя ${msg.from.first_name} [${msg.from.id}]: '${msg.text.trim()}'`);
   console.log(`-----------------------------------------------------`);
 }
 

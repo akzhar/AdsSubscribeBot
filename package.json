@@ -1,7 +1,7 @@
 {
   "name": "SearchApartmentsBot",
-  "version": "1.0.0",
-  "description": "Telegram бот - ищет новые объявления о продаже недвижимости на Avito",
+  "version": "2.0.0",
+  "description": "С помощью данного бота можно подписаться на новые объявления с сайтов Avito, Cian, Youla, Domofond, Domclick",
   "author": "akzharik@mail.ru",
   "license": "MIT",
   "scripts": {
