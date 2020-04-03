@@ -4,7 +4,7 @@ const agent = require('socks5-https-client/lib/Agent');
 const isDeploy = true;
 
 let botOptions = {};
-let botHook - ``;
+let botHook = ``;
 
 if (isDeploy) {
   const token = fs.readFileSync(`token.txt`, `utf8`).trim();
