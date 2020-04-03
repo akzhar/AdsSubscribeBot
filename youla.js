@@ -10,6 +10,7 @@ const SELECTOR = {
 const SORTBY_DATE_PARAM = `&searchOrder=3`;
 
 function getYoulaUrl(url, page) {
+  if (!url.includes(`?`)) url = `${url}?`;
   return `${url}${SORTBY_DATE_PARAM}&page=${page}`;
 }
 

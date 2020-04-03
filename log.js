@@ -21,7 +21,7 @@ msg = (msg) => {
 }
 
 next = (requestName, frequency) => {
-  console.log(`Следующая проверка по запросу ${requestName} через ${frequency} мин.`);
+  console.log(`Следующая проверка по запросу '${requestName}' через ${frequency} мин.`);
   console.log(`-----------------------------------------------------`);
 }
 

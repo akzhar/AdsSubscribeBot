@@ -53,11 +53,11 @@ function User(name) {
 }
 
 function defineSite(requestUrl) {
-  if (requestUrl.indexOf(`avito.ru`) !== -1) return `avito`;
-  if (requestUrl.indexOf(`cian.ru`) !== -1) return `cian`;
-  if (requestUrl.indexOf(`youla.ru`) !== -1) return `youla`;
-  if (requestUrl.indexOf(`domofond.ru`) !== -1) return `domofond`;
-  if (requestUrl.indexOf(`domclick.ru`) !== -1) return `domclick`;
+  if (requestUrl.includes(`avito.ru`)) return `avito`;
+  if (requestUrl.includes(`cian.ru`)) return `cian`;
+  if (requestUrl.includes(`youla.ru`)) return `youla`;
+  if (requestUrl.includes(`domofond.ru`)) return `domofond`;
+  if (requestUrl.includes(`domclick.ru`)) return `domclick`;
   return `unknown`;
 }
 

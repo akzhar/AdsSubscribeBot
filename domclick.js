@@ -10,6 +10,7 @@ const SELECTOR = {
 const SORTBY_DATE_PARAM = `&sort=published`;
 
 function getDomclickUrl(url, page) {
+  if (!url.includes(`?`)) url = `${url}?`;
   return `${url}${SORTBY_DATE_PARAM}&offset=${page * 30}&limit=${30}`;
 }
 

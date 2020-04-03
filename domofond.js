@@ -10,6 +10,7 @@ const SELECTOR = {
 const SORTBY_DATE_PARAM = `&SortOrder=Newest`;
 
 function getDomofondUrl(url, page) {
+  if (!url.includes(`?`)) url = `${url}?`;
   return `${url}${SORTBY_DATE_PARAM}&Page=${page}`;
 }
 

@@ -1,5 +1,3 @@
-**Бот находится в разработке. Не запущен на сервере.**
-
 # AdsSubscribeBot
 [Telegram bot @AdsSubscribeBot](https://t.me/AdsSubscribeBot)
 

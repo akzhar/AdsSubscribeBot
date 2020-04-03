@@ -10,6 +10,7 @@ const SELECTOR = {
 const SORTBY_DATE_PARAM = `&s=104`;
 
 function getAvitoUrl(url, page) {
+  if (!url.includes(`?`)) url = `${url}?`;
   return `${url}${SORTBY_DATE_PARAM}&p=${page}`;
 }
 
