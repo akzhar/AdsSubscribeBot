@@ -27,7 +27,7 @@ const botOptions = config.botOptions;
 const bot = new telegramBot(token, botOptions);
 
 if (config.isDeploy) {
-  bot.setWebHook(BOT_HOOK);
+  bot.setWebHook(config.botHook);
 }
 
 function Request() {
