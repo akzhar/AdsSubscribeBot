@@ -9,7 +9,12 @@ const SELECTOR = {
 };
 
 function getCianUrl(url, page) {
-  url = (url.includes(`?`)) ? `${url}&` : `${url}?`;
+  if (url.includes(`?`)) {
+    url = `${url}&`;
+  else {
+    if (url[url.length - 1] !== `/`) url = `${url}/`;
+    url = `${url}?`;
+  }
   return `${url}p=${page}`;
 }
 
