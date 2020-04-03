@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node bot.js",
     "deploy": "git add . && git commit -m 'fix' && git push heroku master",
-    "logs": "heroku logs --tail"
+    "logs": "heroku logs --tail",
+    "app-on": "heroku ps:scale web=1",
+    "app-off": "heroku ps:scale web=0"
   },
   "dependencies": {
     "fs": "0.0.1-security",
