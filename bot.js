@@ -161,27 +161,21 @@ function doSiteRequest(siteName, requestName, userId) {
       iterations: request.iterations,
       knownAds: request.knownAds
     };
+
     retrieveSiteData(options);
+
     setTimeout(() => {doSiteRequest(siteName, requestName, userId)}, request.frequency * MIN);
   }
 }
 
-// российсике прокси выдают 502 и 301 статус, другие блокируются avito
-// const PROXY_TO_SITE = `193.38.51.75:33281`; // запрос через Российский прокси на авито и циан
-
 function retrieveSiteData(options) {
-  // cian, youla, domofond, domclick - OK
-  // avito без прокси через heroku выдает 403, Forbidden
-  // const requestOptions = {
-  //   proxy: `http://${PROXY_TO_SITE}`
-  // };
   let results = [];
   let counter = 0;
   let lastPage = PAGE_COUNT;
   for (let page = 1; page <= PAGE_COUNT; page++) {
     const url = getSiteUrl(options.siteName, options.url, page);
-    const req = https.get(url);
-    req.once('response', (response) => {
+    const request = https.get(url);
+    request.once('response', (response) => {
       if (response.statusCode === 200) {
         let html = ``;
         response.on('data', (data) => html += data);
@@ -201,10 +195,10 @@ function retrieveSiteData(options) {
       }
       log.status(url, response, USERS, options);
     });
-    req.on('error', (error) => {
+    request.on('error', (error) => {
       console.error(error);
     });
-    req.end();
+    request.end();
   }
 }
 
