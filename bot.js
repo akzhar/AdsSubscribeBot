@@ -4,18 +4,18 @@ const fs = require(`fs`);
 const utils = require(`./utils.js`);
 const log = require(`./log.js`);
 const config = require(`./config.js`);
-const avito = require(`./avito.js`);
+// const avito = require(`./avito.js`);
 const cian = require(`./cian.js`);
 const youla = require(`./youla.js`);
 const domofond = require(`./domofond.js`);
 const domclick = require(`./domclick.js`);
 
-const AVAILABLE_SITES = `Avito, Cian, Youla, Domofond, Domclick`;
+const AVAILABLE_SITES = `Youla, Cian, Domofond, Domclick`;
 const REGEXP_ADD_REQUEST = /^\/add\s\S+$/;
 const REGEXP_NUMBER = /^\d+$/;
-const REGEXP_SHOW_REQUESTS = /^\/show\s(avito|cian|youla|domofond|domclick)$/;
-const REGEXP_STOP_REQUEST = /^\/stop\s(avito|cian|youla|domofond|domclick)\s\S+$/;
-const REGEXP_URL = /^(https?:\/\/)?(.+\.)?(avito|cian|youla|domofond|domclick)\.ru\/.+$/;
+const REGEXP_SHOW_REQUESTS = /^\/show\s(cian|youla|domofond|domclick)$/;
+const REGEXP_STOP_REQUEST = /^\/stop\s(cian|youla|domofond|domclick)\s\S+$/;
+const REGEXP_URL = /^(https?:\/\/)?(.+\.)?(cian|youla|domofond|domclick)\.ru\/.+$/;
 const USERS = {};
 const PAGE_COUNT = 3;
 const MIN = 60000; // ms
@@ -44,7 +44,7 @@ function User(name) {
     name: ``
   },
   this.requests = {
-    avito : {},
+    // avito : {},
     cian: {},
     youla: {},
     domofond: {},
@@ -53,7 +53,7 @@ function User(name) {
 }
 
 function defineSite(requestUrl) {
-  if (requestUrl.includes(`avito.ru`)) return `avito`;
+  // if (requestUrl.includes(`avito.ru`)) return `avito`;
   if (requestUrl.includes(`cian.ru`)) return `cian`;
   if (requestUrl.includes(`youla.ru`)) return `youla`;
   if (requestUrl.includes(`domofond.ru`)) return `domofond`;
@@ -62,7 +62,7 @@ function defineSite(requestUrl) {
 }
 
 function getSiteUrl(siteName, url, page) {
-  if (siteName === `avito`) return avito.getAvitoUrl(url, page);
+  // if (siteName === `avito`) return avito.getAvitoUrl(url, page);
   if (siteName === `cian`) return cian.getCianUrl(url, page);
   if (siteName === `youla`) return youla.getYoulaUrl(url, page);
   if (siteName === `domofond`) return domofond.getDomofondUrl(url, page);
@@ -70,7 +70,7 @@ function getSiteUrl(siteName, url, page) {
 }
 
 function getSiteNewItems(siteName, html, knownAds) {
-  if (siteName === `avito`) return avito.getAvitoNewItems(html, knownAds);
+  // if (siteName === `avito`) return avito.getAvitoNewItems(html, knownAds);
   if (siteName === `cian`) return cian.getCianNewItems(html, knownAds);
   if (siteName === `youla`) return youla.getYoulaNewItems(html, knownAds);
   if (siteName === `domofond`) return domofond.getDomofondNewItems(html, knownAds);

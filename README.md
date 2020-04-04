@@ -2,7 +2,7 @@
 [Telegram bot @AdsSubscribeBot](https://t.me/AdsSubscribeBot)
 
 ### Описание
-С помощью данного бота можно подписаться на новые объявления с сайтов Avito, Cian, Youla, Domofond, Domclick.
+С помощью данного бота можно подписаться на новые объявления с сайтов Youla, Cian, Domofond, Domclick.
 
 Вы ему - поисковой запрос на сайте с нужными фильтрами (ссылку).
 
