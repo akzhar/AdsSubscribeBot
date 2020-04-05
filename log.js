@@ -25,12 +25,12 @@ next = (requestName, frequency) => {
   console.log(`-----------------------------------------------------`);
 }
 
-requests = (usersObj, userId) => {
-  console.log(`Все запросы пользователя ${usersObj[userId].name} [id${userId}]:\n${utils.debug(usersObj[userId].requests)}`);
+requests = (usersObj, chatID) => {
+  console.log(`Все запросы пользователя ${usersObj[chatID].name} [id${chatID}]:\n${utils.debug(usersObj[chatID].requests)}`);
 }
 
 status = (url, page, response, usersObj, options) => {
-  console.log(`${utils.getTimestamp()} - Запрос '${options.requestName}' пользователя ${usersObj[options.userId].name} [id${options.userId}] - итерация No ${options.iterations} - статус ${response.statusCode}, ${response.statusMessage}`);
+  console.log(`${utils.getTimestamp()} - Запрос '${options.requestName}' пользователя ${usersObj[options.chatID].name} [id${options.chatID}] - итерация No ${options.iterations} - статус ${response.statusCode}, ${response.statusMessage}`);
   console.log(`Стр. ${page} - адрес: ${url}`);
   // console.log(`Заголовки ответа:\n${utils.debug(response.headers)}`);
   // console.log(`Контент: ${response.body}`);

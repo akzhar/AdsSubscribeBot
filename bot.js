@@ -80,87 +80,103 @@ function getSiteNewItems(siteName, html, knownAds) {
 bot.on(`polling_error`, (error) => console.log(`Polling error: ${error}`));
 
 bot.on(`message`, (msg) => {
-  const userId = msg.from.id;
+  const chatID = msg.chat.id;
   const userName = msg.from.first_name;
   log.msg(msg);
 
-  if (!USERS.hasOwnProperty(userId)) {
-    USERS[userId] = new User(userName);
+  if (!USERS.hasOwnProperty(chatID)) {
+    USERS[chatID] = new User(userName);
     log.users(USERS);
   }
 
-  newRequestName = USERS[userId].newRequest.name;
-  newRequestSite = USERS[userId].newRequest.site;
+  newRequestName = USERS[chatID].newRequest.name;
+  newRequestSite = USERS[chatID].newRequest.site;
 
   const userText = msg.text.trim();
   if (userText === `/start`) { // ввод команды /start
-    bot.sendMessage(userId, TEXT_START, { parse_mode: `HTML` });
+    bot.sendMessage(chatID, TEXT_START, { parse_mode: `HTML` });
   } else if (REGEXP_ADD_REQUEST.test(userText)) { // ввод команды /add имя_запроса - добавление нового запроса
     const requestName = userText.slice(`/add `.length);
-    USERS[userId].newRequest.name = requestName;
-    bot.sendMessage(userId, `ОК. Пришли мне ссылку для запроса <b>${requestName}</b>...\n${AVAILABLE_SITES}`, { parse_mode: `HTML` });
+    USERS[chatID].newRequest.name = requestName;
+    bot.sendMessage(chatID, `ОК. Пришли мне ссылку для запроса <b>${requestName}</b>...\n${AVAILABLE_SITES}`, { parse_mode: `HTML` });
   } else if (REGEXP_URL.test(userText)) { // ввод адреса запроса
     const requestUrl = userText;
     const siteName = defineSite(requestUrl);
     if (siteName === `unknown`) {
-      bot.sendMessage(userId, `Неверная ссылка. Пришли для запроса <b>${newRequestName}</b> ссылку на один из поддерживаемых ботом сайтов...`, { parse_mode: `HTML` });
-    } else if (USERS[userId].requests[siteName].hasOwnProperty(newRequestName)) { // если по сайту уже есть запрос с таким же именем
-      bot.sendMessage(userId, `Запрос с именем <b>${newRequestName}</b> на сайт <b>${siteName}</b> уже существует.`, { parse_mode: `HTML` });
+      bot.sendMessage(chatID, `Неверная ссылка. Пришли для запроса <b>${newRequestName}</b> ссылку на один из поддерживаемых ботом сайтов...`, { parse_mode: `HTML` });
+    } else if (USERS[chatID].requests[siteName].hasOwnProperty(newRequestName)) { // если по сайту уже есть запрос с таким же именем
+      bot.sendMessage(chatID, `Запрос с именем <b>${newRequestName}</b> на сайт <b>${siteName}</b> уже существует.`, { parse_mode: `HTML` });
     } else if (newRequestName) {
-      USERS[userId].newRequest.site = siteName;
-      USERS[userId].requests[siteName][newRequestName] = new Request();
-      USERS[userId].requests[siteName][newRequestName].url = requestUrl;
-      bot.sendMessage(userId, `ОК, я буду следить за объявлениями на <b>${siteName}</b> по этой ссылке.\nУкажите интервал оповещения по запросу <b>${newRequestName}</b>.\nВведите количество минут...`, { parse_mode: `HTML` });
+      USERS[chatID].newRequest.site = siteName;
+      USERS[chatID].requests[siteName][newRequestName] = new Request();
+      USERS[chatID].requests[siteName][newRequestName].url = requestUrl;
+      bot.sendMessage(chatID, `ОК, я буду следить за объявлениями на <b>${siteName}</b> по этой ссылке.\nУкажите интервал оповещения по запросу <b>${newRequestName}</b>.\nВведите количество минут...`, { parse_mode: `HTML` });
     } else {
-      bot.sendMessage(userId, `Сначала задай имя нового запроса c помощь команды <code>/add</code>\n/help - справка по доступным командам`, { parse_mode: `HTML` });
+      bot.sendMessage(chatID, `Сначала задай имя нового запроса c помощь команды <code>/add</code>\n/help - справка по доступным командам`, { parse_mode: `HTML` });
     }
   } else if (REGEXP_NUMBER.test(userText)) { // ввод интервала оповещения по запросу
     if (newRequestName && newRequestSite) {
       const frequency = +userText;
-      USERS[userId].requests[newRequestSite][newRequestName].frequency = frequency;
-      bot.sendMessage(userId, `Готово. Запрос <b>${newRequestName}</b> на сайт <b>${newRequestSite}</b> добавлен.\nЯ просканировал <b>3</b> первые страницы.\nОповещение раз в <b>${frequency}</b> мин.`, { parse_mode: `HTML` });
-      doSiteRequest(newRequestSite, newRequestName, userId);
+      USERS[chatID].requests[newRequestSite][newRequestName].frequency = frequency;
+      bot.sendMessage(chatID, `Готово. Запрос <b>${newRequestName}</b> на сайт <b>${newRequestSite}</b> добавлен.\nЯ просканировал <b>3</b> первые страницы.\nОповещение раз в <b>${frequency}</b> мин.`, { parse_mode: `HTML` });
+      doSiteRequest(newRequestSite, newRequestName, chatID);
     }
   } else if (REGEXP_SHOW_REQUESTS.test(userText)) { // ввод команды /show имя_сайта - просмотр запросов пользователя по сайту
-    const siteName = userText.slice(`/show `.length);
-    const siteRequests = USERS[userId].requests[siteName];
-    if (utils.getObjSize(siteRequests)) {
-      bot.sendMessage(userId, `Ваши запросы по сайту <b>${siteName}</b>:\n<b>${Object.keys(siteRequests).join(`\n`)}</b>`, { parse_mode: `HTML` });
-    } else {
-      bot.sendMessage(userId, `По сайту <b>${siteName}</b> еще не добавлено ни одного запроса.`, { parse_mode: `HTML` });
-    }
+
+      const sitesRequests = USERS[chatID].requests;
+      for(let site in sitesRequests) {
+        if (sitesRequests.hasOwnProperty(site)) {
+          msg =+ `${site}\n`;
+          for(let request in site) {
+            if (site.hasOwnProperty(request)) {
+              msg =+ ``;
+            }
+          }
+        }
+      }
+
+
+      bot.sendMessage(chatID, `Ваши запросы:\n${utils.debug(USERS[chatID].requests)}`, { parse_mode: `HTML` });
+
+    // const siteName = userText.slice(`/show `.length);
+    // const siteRequests = USERS[chatID].requests[siteName];
+    // if (utils.getObjSize(siteRequests)) {
+      // bot.sendMessage(chatID, `Ваши запросы по сайту <b>${siteName}</b>:\n<b>${Object.keys(siteRequests).join(`\n`)}</b>`, { parse_mode: `HTML` });
+    // } else {
+      // bot.sendMessage(chatID, `По сайту <b>${siteName}</b> еще не добавлено ни одного запроса.`, { parse_mode: `HTML` });
+    // }
   } else if (REGEXP_STOP_REQUEST.test(userText)) { // ввод команды /stop имя_сайта имя_запроса - отписка от указанного запроса пользователя
     const [siteName, requestName] = userText.slice(`/stop `.length).split(` `);
-    if (USERS[userId].requests[siteName].hasOwnProperty(requestName)) { // если по сайту уже есть запрос с таким же именем
-      delete USERS[userId].requests[siteName][requestName];
-      bot.sendMessage(userId, `Подписка на <b>${siteName}</b> по запросу запросу <b>${requestName}</b> отключена.`, { parse_mode: `HTML` });
+    if (USERS[chatID].requests[siteName].hasOwnProperty(requestName)) { // если по сайту уже есть запрос с таким же именем
+      delete USERS[chatID].requests[siteName][requestName];
+      bot.sendMessage(chatID, `Подписка на <b>${siteName}</b> по запросу запросу <b>${requestName}</b> отключена.`, { parse_mode: `HTML` });
     } else {
-      bot.sendMessage(userId, `Запроса на <b>${siteName}</b> с именем <b>${requestName}</b> не существует.\n<code>/show + пробел + имя_сайта</code> - просмотр запросов по сайту`, { parse_mode: `HTML` });
+      bot.sendMessage(chatID, `Запроса на <b>${siteName}</b> с именем <b>${requestName}</b> не существует.\n<code>/show + пробел + имя_сайта</code> - просмотр запросов по сайту`, { parse_mode: `HTML` });
     }
   } else if (userText === `/stopall`) { // ввод команды /stopall - отписка от всех запросов пользователя
-    delete USERS[userId];
+    delete USERS[chatID];
     log.users(USERS);
-    bot.sendMessage(userId, `Подписка на все запросы отключена.`);
+    bot.sendMessage(chatID, `Подписка на все запросы отключена.`);
   } else {
     const msgText = (userText === `/help` || userText === `/add` || userText === `/show` || userText === `/stop`) ? TEXT_HELP : `Невалидный ввод!`;
-    bot.sendMessage(userId, msgText, { parse_mode: `HTML` });
+    bot.sendMessage(chatID, msgText, { parse_mode: `HTML` });
   }
 });
 
-function doSiteRequest(siteName, requestName, userId) {
-  if (USERS.hasOwnProperty(userId) && USERS[userId].requests[siteName].hasOwnProperty(requestName)) {
-    const request = USERS[userId].requests[siteName][requestName];
+function doSiteRequest(siteName, requestName, chatID) {
+  if (USERS.hasOwnProperty(chatID) && USERS[chatID].requests[siteName].hasOwnProperty(requestName)) {
+    const request = USERS[chatID].requests[siteName][requestName];
     request.iterations++;
     const options = {
       siteName: siteName,
       requestName: requestName,
-      userId: userId,
+      chatID: chatID,
       frequency: request.frequency,
       url: request.url,
       iterations: request.iterations,
       knownAds: request.knownAds
     };
-    setTimeout(() => {doSiteRequest(siteName, requestName, userId)}, request.frequency * MIN);
+    setTimeout(() => {doSiteRequest(siteName, requestName, chatID)}, request.frequency * MIN);
     retrieveSiteData(options);
   }
 }
@@ -169,7 +185,7 @@ function retrieveSiteData(options) {
   let results = [];
   let counter = 0;
   let lastPage = PAGE_COUNT;
-  log.requests(USERS, options.userId);
+  log.requests(USERS, options.chatID);
   for (let page = 1; page <= PAGE_COUNT; page++) {
     const url = getSiteUrl(options.siteName, options.url, page);
     const request = https.get(url);
@@ -184,6 +200,7 @@ function retrieveSiteData(options) {
             results = [...results, ...newItems];
           }
           if (counter === lastPage && options.iterations > 1) {
+            if (!options.knownAds.size) bot.sendMessage(options.chatID, `ERROR`);
             printResults(results, options);
           }
           log.results(newItems, page, options);
@@ -201,12 +218,12 @@ function retrieveSiteData(options) {
 }
 
 function printResults(results, options) {
-  bot.sendMessage(options.userId, `<b>${(results.length) ? results.length : 0}</b> новых объявлений с сайта <b>${options.siteName}</b> по запросу <b>${options.requestName}</b> \nВсего по запросу бот запомнил <b>${options.knownAds.size}</b> уникальных объявлений\nСледующая проверка через <b>${options.frequency}</b> мин.`, { parse_mode: `HTML` });
+  bot.sendMessage(options.chatID, `<b>${(results.length) ? results.length : 0}</b> новых объявлений с сайта <b>${options.siteName}</b> по запросу <b>${options.requestName}</b> \nВсего по запросу бот запомнил <b>${options.knownAds.size}</b> уникальных объявлений\nСледующая проверка через <b>${options.frequency}</b> мин.`, { parse_mode: `HTML` });
   log.next(options.requestName, options.frequency);
   if (results.length) {
     setTimeout(() => {
       results.forEach((item) => {
-        bot.sendMessage(options.userId, `► <b>${item.date}</b>, ${item.price} --> <a href='${item.link}'>ссылка</a>`, { parse_mode: `HTML` });
+        bot.sendMessage(options.chatID, `► <b>${item.date}</b>, ${item.price} --> <a href='${item.link}'>ссылка</a>`, { parse_mode: `HTML` });
         log.item(item);
       })
     }, 3000);
