@@ -10,6 +10,7 @@ const youla = require(`./youla.js`);
 const domofond = require(`./domofond.js`);
 const domclick = require(`./domclick.js`);
 
+const DEBUG_CHAT_ID = 758963387;
 const AVAILABLE_SITES = `Youla, Cian, Domofond, Domclick`;
 const REGEXP_ADD_REQUEST = /^\/add\s\S+$/;
 const REGEXP_NUMBER = /^\d+$/;
@@ -129,7 +130,7 @@ bot.on(`message`, (msg) => {
           msg =+ `${site}\n`;
           for(let request in site) {
             if (site.hasOwnProperty(request)) {
-              msg =+ ``;
+              msg =+ `${utils.debug(request)}\n`;
             }
           }
         }
@@ -200,7 +201,7 @@ function retrieveSiteData(options) {
             results = [...results, ...newItems];
           }
           if (counter === lastPage && options.iterations > 1) {
-            if (!options.knownAds.size) bot.sendMessage(options.chatID, `ERROR`);
+            if (!options.knownAds.size) bot.sendMessage(DEBUG_CHAT_ID, `ERROR: 0 results\nURL: ${options.url}`);
             printResults(results, options);
           }
           log.results(newItems, page, options);
