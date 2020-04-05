@@ -25,15 +25,13 @@ next = (requestName, frequency) => {
   console.log(`-----------------------------------------------------`);
 }
 
-requests = (usersObj, siteName, userId) => {
-  console.log(`Все запросы пользователя ${usersObj[userId].name} [id${userId}] по сайту ${siteName}:\n${utils.debug(usersObj[userId].requests[siteName])}`);
+requests = (usersObj, userId) => {
+  console.log(`Все запросы пользователя ${usersObj[userId].name} [id${userId}]:\n${utils.debug(usersObj[userId].requests)}`);
 }
 
-status = (url, response, usersObj, options) => {
-  console.log(`${utils.getTimestamp()} - Запрос '${options.requestName}' пользователя ${usersObj[options.userId].name} [id${options.userId}]`);
-  console.log(`Статус ответа на запрос: ${response.statusCode}, ${response.statusMessage}`);
-  console.log(`Итерация запроса: ${options.iterations}`);
-  console.log(`Адрес запроса: ${url}`);
+status = (url, page, response, usersObj, options) => {
+  console.log(`${utils.getTimestamp()} - Запрос '${options.requestName}' пользователя ${usersObj[options.userId].name} [id${options.userId}] - итерация No ${options.iterations} - статус ${response.statusCode}, ${response.statusMessage}`);
+  console.log(`Стр. ${page} - адрес: ${url}`);
   // console.log(`Заголовки ответа:\n${utils.debug(response.headers)}`);
   // console.log(`Контент: ${response.body}`);
   // console.log(`Редирект: ${response.headers.location}`);

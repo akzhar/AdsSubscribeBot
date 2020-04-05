@@ -119,7 +119,6 @@ bot.on(`message`, (msg) => {
       const frequency = +userText;
       USERS[userId].requests[newRequestSite][newRequestName].frequency = frequency;
       bot.sendMessage(userId, `Готово. Запрос <b>${newRequestName}</b> на сайт <b>${newRequestSite}</b> добавлен.\nЯ просканировал <b>3</b> первые страницы.\nОповещение раз в <b>${frequency}</b> мин.`, { parse_mode: `HTML` });
-      log.requests(USERS, newRequestSite, userId);
       doSiteRequest(newRequestSite, newRequestName, userId);
     }
   } else if (REGEXP_SHOW_REQUESTS.test(userText)) { // ввод команды /show имя_сайта - просмотр запросов пользователя по сайту
@@ -161,10 +160,8 @@ function doSiteRequest(siteName, requestName, userId) {
       iterations: request.iterations,
       knownAds: request.knownAds
     };
-
-    retrieveSiteData(options);
-
     setTimeout(() => {doSiteRequest(siteName, requestName, userId)}, request.frequency * MIN);
+    retrieveSiteData(options);
   }
 }
 
@@ -172,6 +169,7 @@ function retrieveSiteData(options) {
   let results = [];
   let counter = 0;
   let lastPage = PAGE_COUNT;
+  log.requests(USERS, options.userId);
   for (let page = 1; page <= PAGE_COUNT; page++) {
     const url = getSiteUrl(options.siteName, options.url, page);
     const request = https.get(url);
@@ -193,7 +191,7 @@ function retrieveSiteData(options) {
       } else {
         lastPage--;
       }
-      log.status(url, response, USERS, options);
+      log.status(url, page, response, USERS, options);
     });
     request.on('error', (error) => {
       console.error(error);
