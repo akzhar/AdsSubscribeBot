@@ -100,10 +100,12 @@ bot.on(`message`, (msg) => {
     const requests = USERS[chatID].requests;
     for(let site in requests) {
       if (requests.hasOwnProperty(site)) {
-        if (utils.getObjSize(site)) msg += `<b>Запросы на ${site}:</b>\n`;
-        for(let request in site) {
-          if (site.hasOwnProperty(request)) {
-            msg += `► <b>${request}</b> --> <a href="${request.url}">ссылка</a> (раз в ${request.frequency} мин., уже выполнено ${request.iterations} раз)\n`;
+        if (utils.getObjSize(site)) {
+          msg += `<b>Запросы на ${site}:</b>\n`;
+          for(let request in site) {
+            if (site.hasOwnProperty(request)) {
+              msg += `► <b>${request}</b> --> <a href="${request.url}">ссылка</a> (раз в ${request.frequency} мин., просканировано ${request.iterations} раз)\n`;
+            }
           }
         }
       }
