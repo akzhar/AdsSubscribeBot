@@ -14,7 +14,6 @@ const DEBUG_CHAT_ID = 758963387;
 const AVAILABLE_SITES = `Youla, Cian, Domofond, Domclick`;
 const REGEXP_ADD_REQUEST = /^\/add\s\S+$/;
 const REGEXP_NUMBER = /^\d+$/;
-const REGEXP_SHOW_REQUESTS = /^\/show\s(cian|youla|domofond|domclick)$/;
 const REGEXP_STOP_REQUEST = /^\/stop\s(cian|youla|domofond|domclick)\s\S+$/;
 const REGEXP_URL = /^(https?:\/\/)?(.+\.)?(cian|youla|domofond|domclick)\.ru\/.+$/;
 const USERS = {};
@@ -96,6 +95,27 @@ bot.on(`message`, (msg) => {
   const userText = msg.text.trim();
   if (userText === `/start`) { // ввод команды /start
     bot.sendMessage(chatID, TEXT_START, { parse_mode: `HTML` });
+  } else if (userText === `/show`) { // ввод команды /show - просмотр запросов пользователя
+    let msg = ``;
+    const sitesRequests = USERS[chatID].requests;
+    for(let site in sitesRequests) {
+      if (sitesRequests.hasOwnProperty(site)) {
+        if (utils.getObjSize(site)) msg =+ `<b>${site}</b>\n`;
+        for(let request in site) {
+          if (site.hasOwnProperty(request)) {
+            msg =+ `<b>${request}</b> --> <a href="${request.url}">ссылка</a> (раз в ${request.frequency} мин., уже выполнено ${request.iterations} раз)\n`;
+          }
+        }
+      }
+    }
+    bot.sendMessage(chatID, msg, { parse_mode: `HTML` });
+  // const siteName = userText.slice(`/show `.length);
+  // const siteRequests = USERS[chatID].requests[siteName];
+  // if (utils.getObjSize(siteRequests)) {
+    // bot.sendMessage(chatID, `Ваши запросы по сайту <b>${siteName}</b>:\n<b>${Object.keys(siteRequests).join(`\n`)}</b>`, { parse_mode: `HTML` });
+  // } else {
+    // bot.sendMessage(chatID, `По сайту <b>${siteName}</b> еще не добавлено ни одного запроса.`, { parse_mode: `HTML` });
+  // }
   } else if (REGEXP_ADD_REQUEST.test(userText)) { // ввод команды /add имя_запроса - добавление нового запроса
     const requestName = userText.slice(`/add `.length);
     USERS[chatID].newRequest.name = requestName;
@@ -122,30 +142,6 @@ bot.on(`message`, (msg) => {
       bot.sendMessage(chatID, `Готово. Запрос <b>${newRequestName}</b> на сайт <b>${newRequestSite}</b> добавлен.\nЯ просканировал <b>3</b> первые страницы.\nОповещение раз в <b>${frequency}</b> мин.`, { parse_mode: `HTML` });
       doSiteRequest(newRequestSite, newRequestName, chatID);
     }
-  } else if (REGEXP_SHOW_REQUESTS.test(userText)) { // ввод команды /show имя_сайта - просмотр запросов пользователя по сайту
-
-      const sitesRequests = USERS[chatID].requests;
-      for(let site in sitesRequests) {
-        if (sitesRequests.hasOwnProperty(site)) {
-          msg =+ `<b>${site}</b>\n`;
-          for(let request in site) {
-            if (site.hasOwnProperty(request)) {
-              msg =+ `<b>${request}</b> --> <a href="${request.url}">ссылка</a> (раз в ${request.frequency} мин., уже выполнено ${request.iterations} раз)\n`;
-            }
-          }
-        }
-      }
-
-
-      bot.sendMessage(chatID, `Ваши запросы:\n${utils.debug(USERS[chatID].requests)}`, { parse_mode: `HTML` });
-
-    // const siteName = userText.slice(`/show `.length);
-    // const siteRequests = USERS[chatID].requests[siteName];
-    // if (utils.getObjSize(siteRequests)) {
-      // bot.sendMessage(chatID, `Ваши запросы по сайту <b>${siteName}</b>:\n<b>${Object.keys(siteRequests).join(`\n`)}</b>`, { parse_mode: `HTML` });
-    // } else {
-      // bot.sendMessage(chatID, `По сайту <b>${siteName}</b> еще не добавлено ни одного запроса.`, { parse_mode: `HTML` });
-    // }
   } else if (REGEXP_STOP_REQUEST.test(userText)) { // ввод команды /stop имя_сайта имя_запроса - отписка от указанного запроса пользователя
     const [siteName, requestName] = userText.slice(`/stop `.length).split(` `);
     if (USERS[chatID].requests[siteName].hasOwnProperty(requestName)) { // если по сайту уже есть запрос с таким же именем
