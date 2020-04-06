@@ -127,10 +127,10 @@ bot.on(`message`, (msg) => {
       const sitesRequests = USERS[chatID].requests;
       for(let site in sitesRequests) {
         if (sitesRequests.hasOwnProperty(site)) {
-          msg =+ `${site}\n`;
+          msg =+ `<b>${site}</b>\n`;
           for(let request in site) {
             if (site.hasOwnProperty(request)) {
-              msg =+ `${utils.debug(request)}\n`;
+              msg =+ `<b>${request}</b> --> <a href="${request.url}">ссылка</a> (раз в ${request.frequency} мин., уже выполнено ${request.iterations} раз)\n`;
             }
           }
         }
@@ -159,7 +159,7 @@ bot.on(`message`, (msg) => {
     log.users(USERS);
     bot.sendMessage(chatID, `Подписка на все запросы отключена.`);
   } else {
-    const msgText = (userText === `/help` || userText === `/add` || userText === `/show` || userText === `/stop`) ? TEXT_HELP : `Невалидный ввод!`;
+    const msgText = (userText === `/help` || userText === `/add` || userText === `/stop`) ? TEXT_HELP : `Невалидный ввод!`;
     bot.sendMessage(chatID, msgText, { parse_mode: `HTML` });
   }
 });
