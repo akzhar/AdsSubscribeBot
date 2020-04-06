@@ -103,7 +103,7 @@ bot.on(`message`, (msg) => {
         msg += `<b>Запросы на ${site}:</b>\n`;
         for(let request in requests[site]) {
           if (requests[site].hasOwnProperty(request)) {
-            msg += `► <b>${request}</b> --> <a href="${site[request].url}">ссылка</a> (раз в ${site[request].frequency} мин., просканировано ${site[request].iterations} раз)\n`;
+            msg += `► <b>${request}</b> --> <a href="${requests[site][request].url}">ссылка</a> (раз в ${requests[site][request].frequency} мин., просканировано ${requests[site][request].iterations} раз)\n`;
           }
         }
       }
