@@ -97,13 +97,13 @@ bot.on(`message`, (msg) => {
     bot.sendMessage(chatID, TEXT_START, { parse_mode: `HTML` });
   } else if (userText === `/show`) { // ввод команды /show - просмотр запросов пользователя
     let msg = ``;
-    const sitesRequests = USERS[chatID].requests;
-    for(let site in sitesRequests) {
-      if (sitesRequests.hasOwnProperty(site)) {
-        if (utils.getObjSize(site)) msg =+ `<b>${site}</b>\n`;
+    const requests = USERS[chatID].requests;
+    for(let site in requests) {
+      if (requests.hasOwnProperty(site)) {
+        if (utils.getObjSize(site)) msg += `<b>Запросы на ${site}:</b>\n`;
         for(let request in site) {
           if (site.hasOwnProperty(request)) {
-            msg =+ `<b>${request}</b> --> <a href="${request.url}">ссылка</a> (раз в ${request.frequency} мин., уже выполнено ${request.iterations} раз)\n`;
+            msg += `► <b>${request}</b> --> <a href="${request.url}">ссылка</a> (раз в ${request.frequency} мин., уже выполнено ${request.iterations} раз)\n`;
           }
         }
       }
