@@ -101,9 +101,9 @@ bot.on(`message`, (msg) => {
     for(let site in requests) {
       if (requests.hasOwnProperty(site) && utils.getObjSize(requests[site])) {
         msg += `<b>Запросы на ${site}:</b>\n`;
-        for(let request in site) {
+        for(let request in requests[site]) {
           if (site.hasOwnProperty(request)) {
-            msg += `► <b>${request}</b> --> <a href="${request.url}">ссылка</a> (раз в ${request.frequency} мин., просканировано ${request.iterations} раз)\n`;
+            msg += `► <b>${request}</b> --> <a href="${site[request].url}">ссылка</a> (раз в ${site[request].frequency} мин., просканировано ${site[request].iterations} раз)\n`;
           }
         }
       }
