@@ -99,25 +99,16 @@ bot.on(`message`, (msg) => {
     let msg = ``;
     const requests = USERS[chatID].requests;
     for(let site in requests) {
-      if (requests.hasOwnProperty(site)) {
-        if (utils.getObjSize(site)) {
-          msg += `<b>Запросы на ${site}:</b>\n`;
-          for(let request in site) {
-            if (site.hasOwnProperty(request)) {
-              msg += `► <b>${request}</b> --> <a href="${request.url}">ссылка</a> (раз в ${request.frequency} мин., просканировано ${request.iterations} раз)\n`;
-            }
+      if (requests.hasOwnProperty(site) && utils.getObjSize(requests[site])) {
+        msg += `<b>Запросы на ${site}:</b>\n`;
+        for(let request in site) {
+          if (site.hasOwnProperty(request)) {
+            msg += `► <b>${request}</b> --> <a href="${request.url}">ссылка</a> (раз в ${request.frequency} мин., просканировано ${request.iterations} раз)\n`;
           }
         }
       }
     }
     bot.sendMessage(chatID, msg, { parse_mode: `HTML` });
-  // const siteName = userText.slice(`/show `.length);
-  // const siteRequests = USERS[chatID].requests[siteName];
-  // if (utils.getObjSize(siteRequests)) {
-    // bot.sendMessage(chatID, `Ваши запросы по сайту <b>${siteName}</b>:\n<b>${Object.keys(siteRequests).join(`\n`)}</b>`, { parse_mode: `HTML` });
-  // } else {
-    // bot.sendMessage(chatID, `По сайту <b>${siteName}</b> еще не добавлено ни одного запроса.`, { parse_mode: `HTML` });
-  // }
   } else if (REGEXP_ADD_REQUEST.test(userText)) { // ввод команды /add имя_запроса - добавление нового запроса
     const requestName = userText.slice(`/add `.length);
     USERS[chatID].newRequest.name = requestName;
