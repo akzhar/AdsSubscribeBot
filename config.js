@@ -18,7 +18,7 @@ if (isDeploy) {
     }
   };
   botHook = `${externalUrl}:443/bot${token}`;
-  dbOptions.connectionString = process.env.DATABASE_URL + '?sslmode=require';
+  dbOptions.connectionString = `postgres://zmefxsjmjzxdjm:c842fecda2d149f51de92ab5a481b098955566e4f62760f51f34a3e3dd04c053@ec2-34-197-212-240.compute-1.amazonaws.com:5432/d9tfpomnjme45n`; // process.env.DATABASE_URL;
   dbOptions.ssl = true;
 } else {
   const proxyToTelegram = fs.readFileSync(`proxyToTelegram.txt`, `utf8`).trim(); // запрос через иностранный прокси на Telegram
