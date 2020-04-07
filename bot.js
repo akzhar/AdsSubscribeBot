@@ -230,6 +230,7 @@ async function runUsersQueriesFromDB() {
   response.rows.forEach(user => {
     users[user.chatid] = JSON.parse(user.userobj);
   });
+  console.log(`USERS: `, utils.getObjSize(users));
   if (utils.getObjSize(users)) {
     log.rerun();
     for(let chatID in users) {
