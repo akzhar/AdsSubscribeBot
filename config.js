@@ -18,7 +18,7 @@ if (isDeploy) {
     }
   };
   botHook = `${externalUrl}:443/bot${token}`;
-  dbOptions.connectionString = process.env.DATABASE_URL;
+  dbOptions.connectionString = process.env.DATABASE_URL + `?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory`;
   dbOptions.ssl = true;
 } else {
   const proxyToTelegram = fs.readFileSync(`proxyToTelegram.txt`, `utf8`).trim(); // запрос через иностранный прокси на Telegram
