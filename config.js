@@ -3,6 +3,7 @@ const agent = require('socks5-https-client/lib/Agent');
 
 const isDeploy = true;
 
+let dbOptions = {};
 let botOptions = {};
 let botHook = ``;
 
@@ -17,6 +18,8 @@ if (isDeploy) {
     }
   };
   botHook = `${externalUrl}:443/bot${token}`;
+  dbOptions.connectionString = process.env.DATABASE_URL;
+  dbOptions.ssl = true;
 } else {
   const proxyToTelegram = fs.readFileSync(`proxyToTelegram.txt`, `utf8`).trim(); // запрос через иностранный прокси на Telegram
   botOptions = {
@@ -29,10 +32,13 @@ if (isDeploy) {
     },
     polling: true
   };
+  const dbPassword = fs.readFileSync(`dbPassword.txt`, `utf8`).trim();
+  dbOptions.connectionString = `pg://postgres:${dbPassword}@localhost:5432/AdsSubscribeBot`;
 }
 
 const config = {
   isDeploy: isDeploy,
+  dbOptions: dbOptions,
   botOptions: botOptions,
   botHook: botHook
 }

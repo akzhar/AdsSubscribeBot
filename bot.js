@@ -1,6 +1,7 @@
 const https = require('https');
 const telegramBot = require(`node-telegram-bot-api`);
 const fs = require(`fs`);
+const db = require(`./db.js`);
 const utils = require(`./utils.js`);
 const log = require(`./log.js`);
 const config = require(`./config.js`);
@@ -12,16 +13,16 @@ const domclick = require(`./domclick.js`);
 
 const DEBUG_CHAT_ID = 758963387;
 const AVAILABLE_SITES = `Youla, Cian, Domofond, Domclick`;
-const REGEXP_ADD_REQUEST = /^\/add\s\S+$/;
-const REGEXP_NUMBER = /^\d+$/;
 const REGEXP_STOP_REQUEST = /^\/stop\s(cian|youla|domofond|domclick)\s\S+$/;
 const REGEXP_URL = /^(https?:\/\/)?(.+\.)?(cian|youla|domofond|domclick)\.ru\/.+$/;
-const USERS = {};
+const REGEXP_ADD_REQUEST = /^\/add\s\S+$/;
+const REGEXP_NUMBER = /^\d+$/;
 const PAGE_COUNT = 3;
 const MIN = 60000; // ms
-const TEXT_START = fs.readFileSync(`textStart.txt`, `utf8`).trim();
-const TEXT_HELP = fs.readFileSync(`textHelp.txt`, `utf8`).trim();
 
+const users = {};
+const textStart = fs.readFileSync(`textStart.txt`, `utf8`).trim();
+const textHelp = fs.readFileSync(`textHelp.txt`, `utf8`).trim();
 const token = fs.readFileSync(`token.txt`, `utf8`).trim();
 const botOptions = config.botOptions;
 const bot = new telegramBot(token, botOptions);
@@ -34,7 +35,7 @@ function Request() {
   this.url = ``,
   this.frequency = 0,
   this.iterations = 0,
-  this.knownAds = new Set()
+  this.knownAds = {}
 }
 
 function User(name) {
@@ -84,46 +85,49 @@ bot.on(`message`, (msg) => {
   const userName = msg.from.first_name;
   log.msg(msg);
 
-  if (!USERS.hasOwnProperty(chatID)) {
-    USERS[chatID] = new User(userName);
-    log.users(USERS);
+  if (!users.hasOwnProperty(chatID)) {
+    const userObj = new User(userName);
+    users[chatID] = userObj;
+    db.createUser(chatID, userObj);
+    log.users(users);
   }
 
-  newRequestName = USERS[chatID].newRequest.name;
-  newRequestSite = USERS[chatID].newRequest.site;
+  newRequestName = users[chatID].newRequest.name;
+  newRequestSite = users[chatID].newRequest.site;
 
   const userText = msg.text.trim();
   if (userText === `/start`) { // ввод команды /start
-    bot.sendMessage(chatID, TEXT_START, { parse_mode: `HTML` });
+    bot.sendMessage(chatID, textStart, { parse_mode: `HTML` });
   } else if (userText === `/show`) { // ввод команды /show - просмотр запросов пользователя
     let msg = ``;
-    const requests = USERS[chatID].requests;
-    for(let site in requests) {
-      if (requests.hasOwnProperty(site) && utils.getObjSize(requests[site])) {
-        msg += `<b>Запросы на ${site}:</b>\n`;
-        for(let request in requests[site]) {
-          if (requests[site].hasOwnProperty(request)) {
-            msg += `► <b>${request}</b> --> <a href="${requests[site][request].url}">ссылка</a> (раз в ${requests[site][request].frequency} мин., просканировано ${requests[site][request].iterations} раз)\n`;
+    const requests = users[chatID].requests;
+    for(let siteName in requests) {
+      if (requests.hasOwnProperty(siteName) && utils.getObjSize(requests[siteName])) {
+        msg += `<b>Запросы на ${siteName}:</b>\n`;
+        for(let requestName in requests[siteName]) {
+          if (requests[siteName].hasOwnProperty(requestName)) {
+            msg += `► ${requestName} --> <a href="${requests[siteName][requestName].url}">ссылка</a> (раз в ${requests[siteName][requestName].frequency} мин., просканировано ${requests[siteName][requestName].iterations} раз)\n`;
           }
         }
       }
     }
+    if (!msg) msg = `У вас нет добавленных запросов.`;
     bot.sendMessage(chatID, msg, { parse_mode: `HTML` });
   } else if (REGEXP_ADD_REQUEST.test(userText)) { // ввод команды /add имя_запроса - добавление нового запроса
     const requestName = userText.slice(`/add `.length);
-    USERS[chatID].newRequest.name = requestName;
+    users[chatID].newRequest.name = requestName;
     bot.sendMessage(chatID, `ОК. Пришли мне ссылку для запроса <b>${requestName}</b>...\n${AVAILABLE_SITES}`, { parse_mode: `HTML` });
   } else if (REGEXP_URL.test(userText)) { // ввод адреса запроса
     const requestUrl = userText;
     const siteName = defineSite(requestUrl);
     if (siteName === `unknown`) {
       bot.sendMessage(chatID, `Неверная ссылка. Пришли для запроса <b>${newRequestName}</b> ссылку на один из поддерживаемых ботом сайтов...`, { parse_mode: `HTML` });
-    } else if (USERS[chatID].requests[siteName].hasOwnProperty(newRequestName)) { // если по сайту уже есть запрос с таким же именем
+    } else if (users[chatID].requests[siteName].hasOwnProperty(newRequestName)) { // если по сайту уже есть запрос с таким же именем
       bot.sendMessage(chatID, `Запрос с именем <b>${newRequestName}</b> на сайт <b>${siteName}</b> уже существует.`, { parse_mode: `HTML` });
     } else if (newRequestName) {
-      USERS[chatID].newRequest.site = siteName;
-      USERS[chatID].requests[siteName][newRequestName] = new Request();
-      USERS[chatID].requests[siteName][newRequestName].url = requestUrl;
+      users[chatID].newRequest.site = siteName;
+      users[chatID].requests[siteName][newRequestName] = new Request();
+      users[chatID].requests[siteName][newRequestName].url = requestUrl;
       bot.sendMessage(chatID, `ОК, я буду следить за объявлениями на <b>${siteName}</b> по этой ссылке.\nУкажите интервал оповещения по запросу <b>${newRequestName}</b>.\nВведите количество минут...`, { parse_mode: `HTML` });
     } else {
       bot.sendMessage(chatID, `Сначала задай имя нового запроса c помощь команды <code>/add</code>\n/help - справка по доступным командам`, { parse_mode: `HTML` });
@@ -131,31 +135,34 @@ bot.on(`message`, (msg) => {
   } else if (REGEXP_NUMBER.test(userText)) { // ввод интервала оповещения по запросу
     if (newRequestName && newRequestSite) {
       const frequency = +userText;
-      USERS[chatID].requests[newRequestSite][newRequestName].frequency = frequency;
+      users[chatID].requests[newRequestSite][newRequestName].frequency = frequency;
+      db.updateUser(chatID, users[chatID]);
       bot.sendMessage(chatID, `Готово. Запрос <b>${newRequestName}</b> на сайт <b>${newRequestSite}</b> добавлен.\nЯ просканировал <b>3</b> первые страницы.\nОповещение раз в <b>${frequency}</b> мин.`, { parse_mode: `HTML` });
       doSiteRequest(newRequestSite, newRequestName, chatID);
     }
   } else if (REGEXP_STOP_REQUEST.test(userText)) { // ввод команды /stop имя_сайта имя_запроса - отписка от указанного запроса пользователя
     const [siteName, requestName] = userText.slice(`/stop `.length).split(` `);
-    if (USERS[chatID].requests[siteName].hasOwnProperty(requestName)) { // если по сайту уже есть запрос с таким же именем
-      delete USERS[chatID].requests[siteName][requestName];
+    if (users[chatID].requests[siteName].hasOwnProperty(requestName)) { // если по сайту уже есть запрос с таким же именем
+      delete users[chatID].requests[siteName][requestName];
+      db.updateUser(chatID, users[chatID]);
       bot.sendMessage(chatID, `Подписка на <b>${siteName}</b> по запросу запросу <b>${requestName}</b> отключена.`, { parse_mode: `HTML` });
     } else {
       bot.sendMessage(chatID, `Запроса на <b>${siteName}</b> с именем <b>${requestName}</b> не существует.\n<code>/show + пробел + имя_сайта</code> - просмотр запросов по сайту`, { parse_mode: `HTML` });
     }
   } else if (userText === `/stopall`) { // ввод команды /stopall - отписка от всех запросов пользователя
-    delete USERS[chatID];
-    log.users(USERS);
+    delete users[chatID];
+    db.deleteUser(chatID);
+    log.users(users);
     bot.sendMessage(chatID, `Подписка на все запросы отключена.`);
   } else {
-    const msgText = (userText === `/help` || userText === `/add` || userText === `/stop`) ? TEXT_HELP : `Невалидный ввод!`;
+    const msgText = (userText === `/help` || userText === `/add` || userText === `/stop`) ? textHelp : `Невалидный ввод!`;
     bot.sendMessage(chatID, msgText, { parse_mode: `HTML` });
   }
 });
 
 function doSiteRequest(siteName, requestName, chatID) {
-  if (USERS.hasOwnProperty(chatID) && USERS[chatID].requests[siteName].hasOwnProperty(requestName)) {
-    const request = USERS[chatID].requests[siteName][requestName];
+  if (users.hasOwnProperty(chatID) && users[chatID].requests[siteName].hasOwnProperty(requestName)) {
+    const request = users[chatID].requests[siteName][requestName];
     request.iterations++;
     const options = {
       siteName: siteName,
@@ -168,6 +175,7 @@ function doSiteRequest(siteName, requestName, chatID) {
     };
     setTimeout(() => {doSiteRequest(siteName, requestName, chatID)}, request.frequency * MIN);
     retrieveSiteData(options);
+    db.updateUser(chatID, users[chatID]);
   }
 }
 
@@ -175,7 +183,6 @@ function retrieveSiteData(options) {
   let results = [];
   let counter = 0;
   let lastPage = PAGE_COUNT;
-  log.requests(USERS, options.chatID);
   for (let page = 1; page <= PAGE_COUNT; page++) {
     const url = getSiteUrl(options.siteName, options.url, page);
     const request = https.get(url);
@@ -186,29 +193,27 @@ function retrieveSiteData(options) {
         response.on('end', () => {
           counter++;
           const newItems = getSiteNewItems(options.siteName, html, options.knownAds);
-          if (newItems.length) {
-            results = [...results, ...newItems];
-          }
+          log.results(newItems, page, options);
+          results = [...results, ...newItems];
           if (counter === lastPage && options.iterations > 1) {
-            if (!options.knownAds.size) bot.sendMessage(DEBUG_CHAT_ID, `ERROR: 0 results\nURL: ${options.url}`);
             printResults(results, options);
           }
-          log.results(newItems, page, options);
+          if (counter === lastPage && !utils.getObjSize(options.knownAds)) {
+            bot.sendMessage(DEBUG_CHAT_ID, `ERROR: 0 results\nURL: ${options.url}`);
+          }
         });
       } else {
         lastPage--;
       }
-      log.status(url, page, response, USERS, options);
+      log.status(url, page, response, users, options);
     });
-    request.on('error', (error) => {
-      console.error(error);
-    });
+    request.on('error', (error) => console.error(error));
     request.end();
   }
 }
 
 function printResults(results, options) {
-  bot.sendMessage(options.chatID, `<b>${(results.length) ? results.length : 0}</b> новых объявлений с сайта <b>${options.siteName}</b> по запросу <b>${options.requestName}</b> \nВсего по запросу бот запомнил <b>${options.knownAds.size}</b> уникальных объявлений\nСледующая проверка через <b>${options.frequency}</b> мин.`, { parse_mode: `HTML` });
+  bot.sendMessage(options.chatID, `<b>${(results.length) ? results.length : 0}</b> новых объявлений с сайта <b>${options.siteName}</b> по запросу <b>${options.requestName}</b> \nВсего по запросу бот запомнил <b>${utils.getObjSize(options.knownAds)}</b> уникальных объявлений\nСледующая проверка через <b>${options.frequency}</b> мин.`, { parse_mode: `HTML` });
   log.next(options.requestName, options.frequency);
   if (results.length) {
     setTimeout(() => {
@@ -219,5 +224,30 @@ function printResults(results, options) {
     }, 3000);
   }
 }
+
+async function runUsersQueriesFromDB() {
+  let response = await db.getUsers();
+  response.rows.forEach(user => {
+    users[user.chatid] = JSON.parse(user.userobj);
+  });
+  if (utils.getObjSize(users)) {
+    log.rerun();
+    for(let chatID in users) {
+      const requests = users[chatID].requests;
+      for(let siteName in requests) {
+        if (requests.hasOwnProperty(siteName) && utils.getObjSize(requests[siteName])) {
+          for(let requestName in requests[siteName]) {
+            if (requests[siteName].hasOwnProperty(requestName)) {
+              log.request(requestName, siteName, chatID, users);
+              doSiteRequest(siteName, requestName, chatID);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+runUsersQueriesFromDB();
 
 log.start();

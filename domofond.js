@@ -37,8 +37,8 @@ function getNewItem(item, knownAds) {
 
   const key = link;
 
-  if (!knownAds.has(key)) {
-    knownAds.add(key);
+  if (!knownAds.hasOwnProperty(key)) {
+    knownAds[key] = key;
     const newItem = {
       date: date,
       price: price,

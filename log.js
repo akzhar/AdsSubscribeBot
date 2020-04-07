@@ -9,9 +9,29 @@ item = (item) => {
   console.log(`► ${item.date}, ${item.price} --> ${item.link}`);
 }
 
+created = (boolean) => {
+  console.log(`Пользователь в БД создан: `, boolean);
+  console.log(`-----------------------------------------------------`);
+}
+
+updated = (boolean) => {
+  console.log(`Пользователь в БД обновлен: `, boolean);
+  console.log(`-----------------------------------------------------`);
+}
+
+deleted = (boolean) => {
+  console.log(`Пользователь в БД удален: `, boolean);
+  console.log(`-----------------------------------------------------`);
+}
+
+allUsers = (usersObj) => {
+  console.log(`Всего на бота подписано: ${utils.getObjSize(usersObj)}`);
+  console.log(`Все пользователи:\n${utils.debug(usersObj)}\n`);
+  console.log(`-----------------------------------------------------`);
+}
+
 users = (usersObj) => {
   console.log(`Изменилось кол-во пользователей бота. Всего на бота подписано: ${utils.getObjSize(usersObj)}`);
-  // console.log(`Все пользователи:\n${utils.debug(usersObj)}\n`);
   console.log(`-----------------------------------------------------`);
 }
 
@@ -25,10 +45,6 @@ next = (requestName, frequency) => {
   console.log(`-----------------------------------------------------`);
 }
 
-requests = (usersObj, chatID) => {
-  console.log(`Все запросы пользователя ${usersObj[chatID].name} [id${chatID}]:\n${utils.debug(usersObj[chatID].requests)}`);
-}
-
 status = (url, page, response, usersObj, options) => {
   console.log(`${utils.getTimestamp()} - Запрос '${options.requestName}' пользователя ${usersObj[options.chatID].name} [id${options.chatID}] - итерация No ${options.iterations} - статус ${response.statusCode}, ${response.statusMessage}`);
   console.log(`Стр. ${page} - адрес: ${url}`);
@@ -40,19 +56,34 @@ status = (url, page, response, usersObj, options) => {
 
 results = (newItems, page, options) => {
   console.log(`Стр. ${page} - новых объявлений по запросу: ${newItems.length}`);
-  console.log(`Всего по запросу бот запомнил объявлений: ${options.knownAds.size}`);
+  console.log(`Всего по запросу бот запомнил объявлений: ${utils.getObjSize(options.knownAds)}`);
+  console.log(`-----------------------------------------------------`);
+}
+
+rerun = () => {
+  console.log(`Перезапуск пользовательских запросов...`);
+  console.log(`-----------------------------------------------------`);
+}
+
+request = (requestName, siteName, chatID, usersObj) => {
+  console.log(`${utils.getTimestamp()} - перезапуск запроса '${requestName}' на ${siteName} пользователя ${usersObj[chatID].name} [id${chatID}]`);
   console.log(`-----------------------------------------------------`);
 }
 
 const log = {
+  created: created,
+  updated: updated,
+  deleted: deleted,
   start: start,
   item: item,
+  allUsers: allUsers,
   users: users,
   msg: msg,
   next: next,
-  requests: requests,
   status: status,
-  results: results
+  results: results,
+  rerun: rerun,
+  request: request
 };
 
 module.exports = log;
