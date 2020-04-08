@@ -9,18 +9,18 @@ item = (item) => {
   console.log(`► ${item.date}, ${item.price} --> ${item.link}`);
 }
 
-created = (boolean) => {
-  console.log(`Пользователь в БД создан: `, boolean);
+created = () => {
+  console.log(`Пользователь в БД создан`);
   console.log(`-----------------------------------------------------`);
 }
 
-updated = (boolean) => {
-  console.log(`Пользователь в БД обновлен: `, boolean);
+updated = () => {
+  console.log(`Пользователь в БД обновлен`);
   console.log(`-----------------------------------------------------`);
 }
 
-deleted = (boolean) => {
-  console.log(`Пользователь в БД удален: `, boolean);
+deleted = () => {
+  console.log(`Пользователь в БД удален`);
   console.log(`-----------------------------------------------------`);
 }
 
@@ -36,12 +36,12 @@ users = (usersObj) => {
 }
 
 msg = (msg) => {
-  console.log(`${utils.getTimestamp()} - Бот получил сообщение от пользователя ${msg.from.first_name} [${msg.from.id}]: '${msg.text.trim()}'`);
+  console.log(`${utils.getTimestamp()} - бот получил сообщение от пользователя ${msg.from.first_name} [${msg.from.id}]: '${msg.text.trim()}'`);
   console.log(`-----------------------------------------------------`);
 }
 
 next = (requestName, frequency) => {
-  console.log(`Следующая проверка по запросу '${requestName}' через ${frequency} мин.`);
+  console.log(`${utils.getTimestamp()} - cледующая проверка по запросу '${requestName}' через ${frequency} мин.`);
   console.log(`-----------------------------------------------------`);
 }
 

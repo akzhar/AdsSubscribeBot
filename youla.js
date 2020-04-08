@@ -38,7 +38,7 @@ function getNewItem(item, knownAds) {
   const key = link;
 
   if (!knownAds.hasOwnProperty(key)) {
-    knownAds[key] = key;
+    knownAds[key] = true;
     const newItem = {
       date: date,
       price: price,
@@ -50,15 +50,15 @@ function getNewItem(item, knownAds) {
 }
 
 function getItemLink(item) {
-  return item.href;
+  return `https://youla.ru${item.href}`;
 }
 
 function getItemDate(item) {
-  return item.querySelector(SELECTOR.date).innerHTML.trim();
+  return item.querySelector(SELECTOR.date).textContent.trim();
 }
 
 function getItemPrice(item) {
-  return item.querySelector(SELECTOR.price).innerHTML.trim();
+  return item.querySelector(SELECTOR.price).textContent.trim();
 }
 
 const youla = {

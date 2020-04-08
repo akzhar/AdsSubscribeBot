@@ -38,7 +38,7 @@ function getNewItem(item, knownAds) {
   const key = link;
 
   if (!knownAds.hasOwnProperty(key)) {
-    knownAds[key] = key;
+    knownAds[key] = true;
     const newItem = {
       date: date,
       price: price,
@@ -56,12 +56,12 @@ function getItemLink(item) {
 
 function getItemDate(item) {
   const del = `<!-- -->`;
-  const date = item.querySelector(SELECTOR.date).innerHTML.trim();
+  const date = item.querySelector(SELECTOR.date).textContent.trim();
   return date.replace(del, ``)
 }
 
 function getItemPrice(item) {
-  return item.querySelector(SELECTOR.price).innerHTML.trim();
+  return item.querySelector(SELECTOR.price).textContent.trim();
 }
 
 const domofond = {

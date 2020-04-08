@@ -175,7 +175,6 @@ function doSiteRequest(siteName, requestName, chatID) {
     };
     setTimeout(() => {doSiteRequest(siteName, requestName, chatID)}, request.frequency * MIN);
     retrieveSiteData(options);
-    db.updateUser(chatID, users[chatID]);
   }
 }
 
@@ -195,11 +194,14 @@ function retrieveSiteData(options) {
           const newItems = getSiteNewItems(options.siteName, html, options.knownAds);
           log.results(newItems, page, options);
           results = [...results, ...newItems];
-          if (counter === lastPage && options.iterations > 1) {
-            printResults(results, options);
-          }
-          if (counter === lastPage && !utils.getObjSize(options.knownAds)) {
-            bot.sendMessage(DEBUG_CHAT_ID, `ERROR: 0 results\nURL: ${options.url}`);
+          if (counter === lastPage) {
+            db.updateUser(options.chatID, users[options.chatID]);
+            if (options.iterations > 1) {
+              printResults(results, options);
+            }
+            if (!utils.getObjSize(options.knownAds)) {
+              bot.sendMessage(DEBUG_CHAT_ID, `ERROR: 0 results\nURL: ${options.url}`);
+            }
           }
         });
       } else {

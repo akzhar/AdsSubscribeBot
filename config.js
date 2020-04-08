@@ -18,8 +18,9 @@ if (isDeploy) {
     }
   };
   botHook = `${externalUrl}:443/bot${token}`;
-  dbOptions.connectionString = process.env.DATABASE_URL;
-  dbOptions.ssl = true;
+  const dbName = fs.readFileSync(`dbName_production.txt`, `utf8`).trim();
+  const dbPassword = fs.readFileSync(`dbPassword_production.txt`, `utf8`).trim();
+  dbOptions.connectionString = `postgres://${dbName}:${dbPassword}@balarama.db.elephantsql.com:5432/${dbName}`;
 } else {
   const proxyToTelegram = fs.readFileSync(`proxyToTelegram.txt`, `utf8`).trim(); // запрос через иностранный прокси на Telegram
   botOptions = {
@@ -32,8 +33,9 @@ if (isDeploy) {
     },
     polling: true
   };
-  const dbPassword = fs.readFileSync(`dbPassword.txt`, `utf8`).trim();
-  dbOptions.connectionString = `pg://postgres:${dbPassword}@localhost:5432/AdsSubscribeBot`;
+  const dbName = fs.readFileSync(`dbName_local.txt`, `utf8`).trim();
+  const dbPassword = fs.readFileSync(`dbPassword_local.txt`, `utf8`).trim();
+  dbOptions.connectionString = `pg://${dbName}:${dbPassword}@localhost:5432/AdsSubscribeBot`;
 }
 
 const config = {
