@@ -9,7 +9,7 @@ const SELECTOR = {
 };
 const SORTBY_DATE_PARAM = `s=104`;
 
-function getAvitoUrl(url, page) {
+function getUrl(url, page) {
   if (url.includes(`?`)) {
     url = `${url}&${SORTBY_DATE_PARAM}`;
   } else {
@@ -19,7 +19,7 @@ function getAvitoUrl(url, page) {
   return `${url}&p=${page}`;
 }
 
-function getAvitoNewItems(html, knownAds) {
+function getNewItems(html, knownAds) {
   const dom = new JSDOM(html);
   const items = dom.window.document.querySelectorAll(SELECTOR.elem);
   let newItems = [];
@@ -64,8 +64,8 @@ function getItemPrice(item) {
 }
 
 const avito = {
-  getAvitoUrl: getAvitoUrl,
-  getAvitoNewItems: getAvitoNewItems
+  getUrl: getUrl,
+  getNewItems: getNewItems
 };
 
 module.exports = avito;

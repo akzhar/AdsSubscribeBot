@@ -2,12 +2,12 @@ const jsdom = require(`jsdom`);
 const { JSDOM } = jsdom;
 
 const SELECTOR = {
-  elem: `.product_item > a`,
-  // link: `=== elem`,
-  date: `.product_item__date > span`,
-  price: `.product_item__description > div`
+  elem: `article[class^=SerpSnippet_snippet_]`,
+  link: `a[class^=SerpSnippet_name_]`,
+  date: `div[class^=SerpSnippet_actualDate_]`,
+  price: `div[class^=SerpSnippet_price_]`
 };
-const SORTBY_DATE_PARAM = `attributes[sort_field]=date_published`;
+const SORTBY_DATE_PARAM = `searchOrder=3`;
 
 function getUrl(url, page) {
   if (url.includes(`?`)) {
@@ -50,15 +50,17 @@ function getNewItem(item, knownAds) {
 }
 
 function getItemLink(item) {
-  return `https://youla.ru${item.href}`;
+  return item.querySelector(SELECTOR.link).href;
 }
 
 function getItemDate(item) {
-  return item.querySelector(SELECTOR.date).textContent.trim();
+  const del = `Обновлено<!-- --> <!-- -->`;
+  const date = item.querySelector(SELECTOR.date).textContent.trim();
+  return date.replace(del, ``)
 }
 
 function getItemPrice(item) {
-  return item.querySelector(SELECTOR.price).textContent.trim();
+  return item.querySelector(SELECTOR.price).textContent.trim() + ` ₽`;
 }
 
 const youla = {

@@ -8,7 +8,7 @@ const SELECTOR = {
   price: `div[class*=--header--]`
 };
 
-function getCianUrl(url, page) {
+function getUrl(url, page) {
   if (url.includes(`?`)) {
     url = `${url}&`;
   } else {
@@ -18,7 +18,7 @@ function getCianUrl(url, page) {
   return `${url}p=${page}`;
 }
 
-function getCianNewItems(html, knownAds) {
+function getNewItems(html, knownAds) {
   const dom = new JSDOM(html);
   const items = dom.window.document.querySelectorAll(SELECTOR.elem);
   let newItems = [];
@@ -61,8 +61,8 @@ function getItemPrice(item) {
 }
 
 const cian = {
-  getCianUrl: getCianUrl,
-  getCianNewItems: getCianNewItems
+  getUrl: getUrl,
+  getNewItems: getNewItems
 };
 
 module.exports = cian;

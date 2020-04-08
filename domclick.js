@@ -9,7 +9,7 @@ const SELECTOR = {
 };
 const SORTBY_DATE_PARAM = `sort=published`;
 
-function getDomclickUrl(url, page) {
+function getUrl(url, page) {
   if (url.includes(`?`)) {
     url = `${url}&${SORTBY_DATE_PARAM}`;
   } else {
@@ -19,7 +19,7 @@ function getDomclickUrl(url, page) {
   return `${url}&offset=${page * 30}&limit=${30}`;
 }
 
-function getDomclickNewItems(html, knownAds) {
+function getNewItems(html, knownAds) {
   const dom = new JSDOM(html);
   const items = dom.window.document.querySelectorAll(SELECTOR.elem);
   let newItems = [];
@@ -63,8 +63,8 @@ function getItemPrice(item) {
 }
 
 const domclick = {
-  getDomclickUrl: getDomclickUrl,
-  getDomclickNewItems: getDomclickNewItems
+  getUrl: getUrl,
+  getNewItems: getNewItems
 };
 
 module.exports = domclick;

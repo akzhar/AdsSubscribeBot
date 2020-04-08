@@ -1,7 +1,7 @@
 const fs = require(`fs`);
 const agent = require('socks5-https-client/lib/Agent');
 
-const isDeploy = true;
+const isDeploy = false;
 
 const token = fs.readFileSync(`save/token.txt`, `utf8`).trim();
 const debugChatID = fs.readFileSync(`save/debugChatID.txt`, `utf8`).trim();
@@ -23,7 +23,7 @@ if (isDeploy) {
   const dbPassword = fs.readFileSync(`save/dbPassword_production.txt`, `utf8`).trim();
   dbOptions.connectionString = `postgres://${dbName}:${dbPassword}@balarama.db.elephantsql.com:5432/${dbName}`;
 } else {
-  const proxyToTelegram = fs.readFileSync(`proxyToTelegram.txt`, `utf8`).trim(); // запрос через иностранный прокси на Telegram
+  const proxyToTelegram = fs.readFileSync(`save/proxyToTelegram.txt`, `utf8`).trim(); // запрос через иностранный прокси на Telegram
   botOptions = {
     request: {
       agentClass: agent,

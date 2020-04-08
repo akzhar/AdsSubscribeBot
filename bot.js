@@ -7,6 +7,7 @@ const log = require(`./log.js`);
 const config = require(`./config.js`);
 // const avito = require(`./avito.js`);
 const cian = require(`./cian.js`);
+const autoyoula = require(`./auto.youla.js`);
 const youla = require(`./youla.js`);
 const domofond = require(`./domofond.js`);
 const domclick = require(`./domclick.js`);
@@ -43,17 +44,19 @@ function User(name) {
     name: ``
   },
   this.requests = {
-    // avito : {},
-    cian: {},
-    youla: {},
-    domofond: {},
-    domclick: {}
+    // 'avito' : {},
+    'cian': {},
+    'auto.youla': {},
+    'youla': {},
+    'domofond': {},
+    'domclick': {}
   }
 }
 
 function defineSite(requestUrl) {
   // if (requestUrl.includes(`avito.ru`)) return `avito`;
   if (requestUrl.includes(`cian.ru`)) return `cian`;
+  if (requestUrl.includes(`auto.youla.ru`)) return `auto.youla`;
   if (requestUrl.includes(`youla.ru`)) return `youla`;
   if (requestUrl.includes(`domofond.ru`)) return `domofond`;
   if (requestUrl.includes(`domclick.ru`)) return `domclick`;
@@ -61,19 +64,21 @@ function defineSite(requestUrl) {
 }
 
 function getSiteUrl(siteName, url, page) {
-  // if (siteName === `avito`) return avito.getAvitoUrl(url, page);
-  if (siteName === `cian`) return cian.getCianUrl(url, page);
-  if (siteName === `youla`) return youla.getYoulaUrl(url, page);
-  if (siteName === `domofond`) return domofond.getDomofondUrl(url, page);
-  if (siteName === `domclick`) return domclick.getDomclickUrl(url, page);
+  // if (siteName === `avito`) return avito.getUrl(url, page);
+  if (siteName === `cian`) return cian.getUrl(url, page);
+  if (siteName === `auto.youla`) return autoyoula.getUrl(url, page);
+  if (siteName === `youla`) return youla.getUrl(url, page);
+  if (siteName === `domofond`) return domofond.getUrl(url, page);
+  if (siteName === `domclick`) return domclick.getUrl(url, page);
 }
 
 function getSiteNewItems(siteName, html, knownAds) {
-  // if (siteName === `avito`) return avito.getAvitoNewItems(html, knownAds);
-  if (siteName === `cian`) return cian.getCianNewItems(html, knownAds);
-  if (siteName === `youla`) return youla.getYoulaNewItems(html, knownAds);
-  if (siteName === `domofond`) return domofond.getDomofondNewItems(html, knownAds);
-  if (siteName === `domclick`) return domclick.getDomclickNewItems(html, knownAds);
+  // if (siteName === `avito`) return avito.getNewItems(html, knownAds);
+  if (siteName === `cian`) return cian.getNewItems(html, knownAds);
+  if (siteName === `auto.youla`) return autoyoula.getNewItems(html, knownAds);
+  if (siteName === `youla`) return youla.getNewItems(html, knownAds);
+  if (siteName === `domofond`) return domofond.getNewItems(html, knownAds);
+  if (siteName === `domclick`) return domclick.getNewItems(html, knownAds);
 }
 
 bot.on(`polling_error`, (error) => console.log(`Polling error: ${error}`));
@@ -104,7 +109,7 @@ bot.on(`message`, (msg) => {
         msg += `<b>Запросы на ${siteName}:</b>\n`;
         for(let requestName in requests[siteName]) {
           if (requests[siteName].hasOwnProperty(requestName)) {
-            msg += `► ${requestName} --> <a href="${requests[siteName][requestName].url}">ссылка</a> (раз в ${requests[siteName][requestName].frequency} мин., просканировано ${requests[siteName][requestName].iterations} раз)\n`;
+            msg += `► <a href="${requests[siteName][requestName].url}">${requestName}</a> (раз в <b>${requests[siteName][requestName].frequency}</b> мин., просканировано <b>${requests[siteName][requestName].iterations}</b> раз)\n`;
           }
         }
       }

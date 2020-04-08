@@ -9,7 +9,7 @@ const SELECTOR = {
 };
 const SORTBY_DATE_PARAM = `SortOrder=Newest`;
 
-function getDomofondUrl(url, page) {
+function getUrl(url, page) {
   if (url.includes(`?`)) {
     url = `${url}&${SORTBY_DATE_PARAM}`;
   } else {
@@ -19,7 +19,7 @@ function getDomofondUrl(url, page) {
   return `${url}&Page=${page}`;
 }
 
-function getDomofondNewItems(html, knownAds) {
+function getNewItems(html, knownAds) {
   const dom = new JSDOM(html);
   const items = dom.window.document.querySelectorAll(SELECTOR.elem);
   let newItems = [];
@@ -65,8 +65,8 @@ function getItemPrice(item) {
 }
 
 const domofond = {
-  getDomofondUrl: getDomofondUrl,
-  getDomofondNewItems: getDomofondNewItems
+  getUrl: getUrl,
+  getNewItems: getNewItems
 };
 
 module.exports = domofond;
