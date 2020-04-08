@@ -41,7 +41,7 @@ msg = (msg) => {
 }
 
 next = (requestName, frequency) => {
-  console.log(`${utils.getTimestamp()} - cледующая проверка по запросу '${requestName}' через ${frequency} мин.`);
+  console.log(`${utils.getTimestamp()} - cледующая проверка по подписке '${requestName}' через ${frequency} мин.`);
   console.log(`-----------------------------------------------------`);
 }
 
@@ -55,18 +55,18 @@ status = (url, page, response, usersObj, options) => {
 }
 
 results = (newItems, page, options) => {
-  console.log(`Стр. ${page} - новых объявлений по запросу: ${newItems.length}`);
-  console.log(`Всего по запросу бот запомнил объявлений: ${utils.getObjSize(options.knownAds)}`);
+  console.log(`Стр. ${page} - новых объявлений по подписке: ${newItems.length}`);
+  console.log(`Всего по данной подписке бот запомнил объявлений: ${utils.getObjSize(options.knownAds)}`);
   console.log(`-----------------------------------------------------`);
 }
 
 rerun = () => {
-  console.log(`Перезапуск пользовательских запросов...`);
+  console.log(`Перезапуск пользовательских подписок...`);
   console.log(`-----------------------------------------------------`);
 }
 
 request = (requestName, siteName, chatID, usersObj) => {
-  console.log(`${utils.getTimestamp()} - перезапуск запроса '${requestName}' на ${siteName} пользователя ${usersObj[chatID].name} [id${chatID}]`);
+  console.log(`${utils.getTimestamp()} - перезапуск подписки '${requestName}' на ${siteName} пользователя ${usersObj[chatID].name} [id${chatID}]`);
   console.log(`-----------------------------------------------------`);
 }
 
