@@ -24,7 +24,7 @@ stop - + имя_сайта + имя_запроса
 stopall - отписка от всех запросов
 
 DATABASE_URL:
-psql -d postgres://owyhxquo:CfW3BMtChRFerU4oU468PUWMZEZ3-7Dt@balarama.db.elephantsql.com:5432/owyhxquo
+psql -d postgres://owyhxquo:s_4jVtMkpYSn9kHQf2GRv8JuEeB5nUB8@balarama.db.elephantsql.com:5432/owyhxquo
 
 token.txt
 1208038529:AAF1c5KUMjRN6aJQJfo2FW1Apnt43wgEVZQ
