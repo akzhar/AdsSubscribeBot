@@ -1,7 +1,7 @@
 const fs = require(`fs`);
 const agent = require('socks5-https-client/lib/Agent');
 
-const isDeploy = false;
+const isDeploy = true;
 
 let dbOptions = {};
 let botOptions = {};
