@@ -1,7 +1,7 @@
 const fs = require(`fs`);
 const agent = require('socks5-https-client/lib/Agent');
 
-const isDeploy = false;
+const isDeploy = true;
 
 const token = fs.readFileSync(`save/token.txt`, `utf8`).trim();
 const debugChatID = fs.readFileSync(`save/debugChatID.txt`, `utf8`).trim();
