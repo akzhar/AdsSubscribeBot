@@ -11,7 +11,6 @@ const youla = require(`./youla.js`);
 const domofond = require(`./domofond.js`);
 const domclick = require(`./domclick.js`);
 
-const DEBUG_CHAT_ID = 758963387;
 const AVAILABLE_SITES = `Youla, Cian, Domofond, Domclick`;
 const REGEXP_STOP_REQUEST = /^\/stop\s(cian|youla|domofond|domclick)\s\S+$/;
 const REGEXP_URL = /^(https?:\/\/)?(.+\.)?(cian|youla|domofond|domclick)\.ru\/.+$/;
@@ -23,9 +22,8 @@ const MIN = 60000; // ms
 const users = {};
 const textStart = fs.readFileSync(`textStart.txt`, `utf8`).trim();
 const textHelp = fs.readFileSync(`textHelp.txt`, `utf8`).trim();
-const token = fs.readFileSync(`token.txt`, `utf8`).trim();
 const botOptions = config.botOptions;
-const bot = new telegramBot(token, botOptions);
+const bot = new telegramBot(config.token, botOptions);
 
 if (config.isDeploy) {
   bot.setWebHook(config.botHook);
@@ -200,7 +198,7 @@ function retrieveSiteData(options) {
               printResults(results, options);
             }
             if (!utils.getObjSize(options.knownAds)) {
-              bot.sendMessage(DEBUG_CHAT_ID, `ERROR: 0 results\nURL: ${options.url}`);
+              bot.sendMessage(config.debugChatID, `ERROR: 0 results\nURL: ${options.url}`);
             }
           }
         });

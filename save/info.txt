@@ -1,0 +1,36 @@
+LINK:
+https://t.me/AdsSubscribeBot
+
+NAME:
+AdsSubscribeBot
+
+ABOUT:
+С помощью данного бота можно подписаться на новые объявления с сайтов Youla, Cian, Domofond, Domclick.
+
+DESCRIPTION:
+С помощью данного бота можно подписаться на новые объявления с сайтов Youla, Cian, Domofond, Domclick.
+
+Вы ему - поисковой запрос на сайте с нужными фильтрами (ссылку).
+Он вам - только новые объявления по данному запросу.
+
+/start - гайд как начать
+
+COMMANDS:
+start - описание возможностей
+help - справка по командам
+show - просмотр активных запросов
+add - + имя_запроса
+stop - + имя_сайта + имя_запроса
+stopall - отписка от всех запросов
+
+DATABASE_URL:
+psql -d postgres://owyhxquo:CfW3BMtChRFerU4oU468PUWMZEZ3-7Dt@balarama.db.elephantsql.com:5432/owyhxquo
+
+token.txt
+1208038529:AAF1c5KUMjRN6aJQJfo2FW1Apnt43wgEVZQ
+
+dbName_production.txt
+owyhxquo
+
+dbPassword_production.txt
+s_4jVtMkpYSn9kHQf2GRv8JuEeB5nUB8
