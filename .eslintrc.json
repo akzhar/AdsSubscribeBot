@@ -1,0 +1,110 @@
+{
+  "env": {
+    "node": true,
+    "browser": true,
+    "es6": true,
+    "jest": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript",
+    "plugin:react/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:jest-dom/recommended"
+  ],
+  "plugins": [
+    "@typescript-eslint",
+    "import",
+    "react",
+    "jsx-a11y",
+    "react-hooks",
+    "jest-dom"
+  ],
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "fragment": "Fragment",
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "array-bracket-spacing": 2,
+    "arrow-parens": [2, "as-needed", { "requireForBlockBody": true }],
+    "camelcase": [0, { "properties": "always" }],
+    "jsx-quotes": 2,
+    "linebreak-style": [0, "unix"],
+    "max-len": [2, 120, 2],
+    "no-await-in-loop": 2,
+    "no-console": [1, { "allow": ["info", "warn", "error"] }],
+    "no-debugger":"warn",
+    "no-var": 2,
+    "object-shorthand": 2,
+    "prefer-const": 2,
+    "prefer-template": 2,
+    "react-hooks/exhaustive-deps": 0,
+    "quotes": ["error", "single"],
+    "quote-props": [2, "as-needed"],
+    "comma-dangle": ["error", "never"],
+    "space-before-function-paren": [
+      2,
+      { "anonymous": "always", "named": "never" }
+    ],
+    "strict": [2, "global"],
+    "global-require": 2,
+    "function-paren-newline": 0,
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "external",
+          "internal",
+          "builtin",
+          "parent",
+          "index",
+          "sibling"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "@assets/**",
+            "group": "internal"
+          },
+          {
+            "pattern": "@components/**",
+            "group": "internal"
+          },
+          {
+            "pattern": "@pages/**",
+            "group": "internal"
+          },
+          {
+            "pattern": "@consts/**",
+            "group": "internal"
+          },
+          {
+            "pattern": "@hooks/**",
+            "group": "internal"
+          },
+          {
+            "pattern": "@store/**",
+            "group": "internal"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "newlines-between": "always"
+      }
+    ],
+    "import/no-unresolved": 0,
+    "import/extensions": 0,
+    "import/prefer-default-export": 0,
+    "import/newline-after-import": ["error", { "count": 1 }],
+    "jsx-a11y/anchor-is-valid": 0,
+    "react/prop-types": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "@typescript-eslint/no-empty-interface": 0
+  }
+}

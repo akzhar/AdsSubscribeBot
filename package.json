@@ -1,22 +1,35 @@
 {
-  "name": "SearchApartmentsBot",
-  "version": "3.0.0",
-  "description": "С помощью данного бота можно подписаться на новые объявления с сайтов Avito, Cian, Youla, Domofond, Domclick",
-  "author": "akzharik@mail.ru",
-  "license": "MIT",
+  "name": "ads-subscribe-bot",
+  "version": "1.0.0",
+  "description": "search ads bot",
+  "author": "akzhar.taov@yandex.ru",
+  "type": "module",
   "scripts": {
-    "start": "node bot.js",
-    "deploy": "git add . && git commit -m 'fix' && git push heroku master",
-    "logs": "heroku logs --tail",
-    "app-on": "heroku ps:scale web=1",
-    "app-off": "heroku ps:scale web=0"
+    "dev": "ts-node ./src/index.ts",
+    "build": "tsc && tsc-alias -p tsconfig.json",
+    "start": "cross-env NODE_ENV=production node ./public/index.js"
+  },
+  "engines": {
+    "node": "12.18.3",
+    "npm": "6.14.16"
   },
   "dependencies": {
-    "fs": "0.0.1-security",
-    "jsdom": "^16.2.2",
-    "node-telegram-bot-api": "^0.40.0",
-    "pg": "^8.0.0",
-    "socks5-https-client": "^1.2.1"
+    "jsdom": "16.2.2",
+    "node-telegram-bot-api": "0.40.0",
+    "pg": "8.0.0",
+    "pino": "8.7.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/jsdom": "20.0.0",
+    "@types/node": "18.11.7",
+    "@types/node-telegram-bot-api": "0.57.6",
+    "@types/pg": "8.6.5",
+    "@typescript-eslint/eslint-plugin": "4.33.0",
+    "@typescript-eslint/parser": "4.33.0",
+    "cross-env": "7.0.3",
+    "eslint": "7.18.0",
+    "ts-node": "10.8.1",
+    "tsc-alias": "1.7.0",
+    "typescript": "4.6.4"
+  }
 }
