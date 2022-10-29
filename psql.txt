@@ -1,0 +1,3 @@
+psql --host=balarama.db.elephantsql.com --username=owyhxquo
+
+select * from users;

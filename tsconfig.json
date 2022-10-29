@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "outDir": "public",
+    "target": "es5",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "rootDir": "./",
+    "lib": ["es6", "dom"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "noImplicitAny": true,
+    "noImplicitThis": false,
+    "noEmit": false,
+    "sourceMap": true,
+    "baseUrl": "."
+  },
+  "ts-node": {
+    "esm": true
+  },
+  "include": [
+    "src",
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ],
+  "exclude": ["node_modules"],
+  "extends": "./tsconfig.paths"
+}
