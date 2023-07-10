@@ -16,7 +16,7 @@
   "dependencies": {
     "jsdom": "16.2.2",
     "node-telegram-bot-api": "0.40.0",
-    "pg": "8.0.0",
+    "pg": "8.11.1",
     "pino": "8.7.0"
   },
   "devDependencies": {
