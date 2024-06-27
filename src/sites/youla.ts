@@ -3,10 +3,10 @@ import Site, { TSiteUrlComponents } from '@models/site';
 const youlaSite = new Site({
   url: 'https://youla.ru',
   cssSelector: {
-    elem: '.product_item > a',
-    link: '.product_item > a',
-    date: '.product_item__date > span',
-    price: '.product_item__description > div'
+    elem: 'div[data-test-component="ProductOrAdCard"] a',
+    link: 'div[data-test-component="ProductOrAdCard"] a',
+    date: '',
+    price: 'div[data-test-component="ProductOrAdCard"] span[data-test-component="Price"] span:first-child'
   },
   dateParam: 'attributes[sort_field]=date_published'
 });

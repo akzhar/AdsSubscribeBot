@@ -1,10 +1,12 @@
 import LoggerService from '@services/logger';
 import WebService from '@services/web';
 import DatabaseService from '@services/database';
+import dotenv from 'dotenv';
 
 import Bot from './Bot';
 import { SITES } from './sites';
 
+dotenv.config();
 const { NODE_ENV, TELEGRAM_API_TOKEN, TELEGRAM_SRVC_CHAT_ID, APP_HOST, APP_PORT, DB_URL } = process.env;
 
 const mode = (NODE_ENV === 'production') ? NODE_ENV : 'development';

@@ -11,6 +11,9 @@ class LoggerService {
         stream = pino.destination({ dest: '/log', sync: false });
       }
       this.loggerAgent = pino(stream);
+      if(mode !== 'production') {
+        this.loggerAgent.level = 'trace';
+      }
       LoggerService._instance = this;
     }
     return LoggerService._instance;

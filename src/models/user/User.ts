@@ -2,6 +2,10 @@ import { TSiteKnownAds, TSiteItem } from '@models/site';
 
 import { TAvailableSites } from '../../sites'
 
+type TSubscriptions = {
+  [site in TAvailableSites]: { [name: string]: UserSubscription }
+};
+
 export class UserSubscription {
   name: string;
   url: string;
@@ -32,20 +36,12 @@ export class UserSubscription {
 class User {
   chatId: number;
   name: string;
-  subscriptions: {
-    [site in TAvailableSites]: { [name: string]: UserSubscription }
-  };
+  subscriptions: TSubscriptions;
 
-  constructor(chatId: number, name: string) {
+  constructor(chatId: number, name: string, subscriptions: TSubscriptions = {avito: {}, cian: {}, youla: {}, domofond: {}, domclick: {}}) {
     this.chatId = chatId;
     this.name = name;
-    this.subscriptions = {
-      avito: {},
-      cian: {},
-      youla: {},
-      domofond: {},
-      domclick: {}
-    };
+    this.subscriptions = subscriptions;
   }
 
   hasSubscription(siteName: TAvailableSites, subscriptionName: string): boolean {

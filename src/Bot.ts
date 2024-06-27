@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import TelegramBot, { ConstructorOptions } from 'node-telegram-bot-api';
 import getObjSize from '@utils/get-obj-size';
 import capitalize from '@utils/capitalize';
@@ -8,25 +7,19 @@ import Database from '@services/database';
 import LoggerService from '@services/logger';
 import WebService from '@services/web';
 
+import path from 'path';
 import fs from 'fs';
 
 import { AVAILABLE_SITES } from './sites'
 
 const MINUTE = 60000; // 60 sec
 
-const COMMAND = {
-  start: 'start',
-  show: 'show',
-  add: 'add',
-  stop: 'stop',
-  stopall: 'stopall'
-}
-
-const COMMAND_REGEXP = {
-  // eslint-disable-next-line no-useless-escape
-  add: new RegExp(`^\/${COMMAND.add}\s\S+\s(https?:\/\/)?(.+\.)?(${AVAILABLE_SITES.join('|')})\.ru\/.+$`),
-  // eslint-disable-next-line no-useless-escape
-  stop: new RegExp(`^\/${COMMAND.stop}\s(${AVAILABLE_SITES.join('|')})\s\S+$`)
+const COMMAND_PATTERNS = {
+  start: `/start`,
+  show: `/show`,
+  add: `^/add\\s\\S+\\s(https?://)?(.+\\.)?(${AVAILABLE_SITES.join('|')})\\.ru/.+$`,
+  stop: `^/stop\\s(${AVAILABLE_SITES.join('|')})\\s\\S+$`,
+  stopall: `/stopall`,
 };
 
 type TBotConfig = {
@@ -64,10 +57,18 @@ class Bot {
       this.logger = logger;
       this.web = web;
       this.users = {};
+      this.db.getUsers()
+        .then((res) => {
+          this.logger.info(`Retrieved users from DB: ${res?.rows.length}`);
+          res?.rows.forEach((user) => {
+            const userData = JSON.parse(user.user_obj);
+            this.users[user.chat_id] = new User(userData.chatId, userData.name, userData.subscriptions);
+          });
+        });
       const availableSites = AVAILABLE_SITES.map(name => capitalize(name)).join(', ');
       this.hint = {
-        start: fs.readFileSync('./hints/textStart.txt', 'utf8').trim(),
-        help: `${fs.readFileSync('./hints/textHelp.txt', 'utf8').trim()}\n\nПоддерживаемые сайты:\n${availableSites}`
+        start: fs.readFileSync(path.join(process.cwd(), './src/hints/start.txt'), 'utf8').trim(),
+        help: `${fs.readFileSync(path.join(process.cwd(), './src/hints/help.txt'), 'utf8').trim()}\n\nПоддерживаемые сайты:\n${availableSites}`
       };
       this.srvcChatId = srvcChatId;
       Bot._instance = this;
@@ -79,8 +80,8 @@ class Bot {
     this.api.sendMessage(chatId, text, { parse_mode: 'HTML', disable_web_page_preview: true });
   }
 
-  sendServiceMessage(text: string) {
-    this.sendMessage(this.srvcChatId, text);
+  sendServiceAlert(text: string) {
+    this.sendMessage(this.srvcChatId, `SERVICE ALERT: ${text}`);
   }
 
   parseMessage(msg: TelegramBot.Message) {
@@ -96,12 +97,19 @@ class Bot {
 
   showHelpHint(chatId: number) {
     this.sendMessage(chatId, this.hint.help);
+    this.sendMessage(chatId, `<pre><code class="language-json">${JSON.stringify(COMMAND_PATTERNS, null, 2)}</code></pre>`);
   }
 
-  createUser(chatId: number, userName: string) {
-    const user = new User(chatId, userName);
-    this.db.createUser(chatId, user)
-      .then(() => this.users[chatId] = user);
+  async createUser(chatId: number, userName: string) {
+    if (!this.hasCashedUser(chatId)) {
+      const user = new User(chatId, userName);
+      this.saveUserToCashe(chatId, user);
+      try {
+        await this.db.hasUser(chatId);
+      } catch(_e) {
+        this.db.createUser(chatId, user);
+      }
+    }
   }
 
   deleteUser(chatId: number) {
@@ -109,13 +117,28 @@ class Bot {
       .then(() => delete this.users[chatId]);
   }
 
+  saveUserToCashe(chatId: number, user: User) {
+    if (!this.hasCashedUser(chatId)) {
+      this.users[chatId] = user;
+    }
+  }
+
   getCashedUser(chatId: number): User {
     return this.users[chatId];
+  }
+
+  hasCashedUser(chatId: number): boolean {
+    // return this.getCashedUser(chatId) !== undefined;
+    return Object.prototype.hasOwnProperty.call(this.users, chatId);
   }
 
   showSubscriptions(chatId: number) {
     let text = '';
     const user = this.getCashedUser(chatId);
+
+    console.log(chatId);
+    console.log(JSON.stringify(this.users, null, 2));
+
     const subscriptions = user.subscriptions;
     for(const siteName in user.subscriptions) {
       const siteSubscriptions = subscriptions[siteName];
@@ -153,7 +176,7 @@ class Bot {
       this.db.updateUser(user.chatId, user)
         .then(() => this.sendNewItems(user.chatId, newItems, subscription));
     } else {
-      this.sendServiceMessage(`0 уникальных объявлений по URL:\n${subscription.url}`);
+      this.sendServiceAlert(`0 уникальных объявлений по URL:\n${subscription.url}`);
     }
   }
 
@@ -175,7 +198,7 @@ class Bot {
         if (user.hasSubscription(siteName, subscriptionName)) {
           const subscription = user.getSubscription(siteName, subscriptionName);
           this.runSubscription(user, subscription);
-          this.sendMessage(chatId, `Подписка активирована.\nОповещение раз в <b>${subscription.frequency}</b> мин.`)
+          this.sendMessage(chatId, `Подписка активирована.\nОповещение раз в <b>${subscription.frequency}</b> мин. (${subscription.frequency / 60}) ч.`)
           setTimeout(() => this.runSubscription(user, subscription), subscription.frequency * MINUTE);
         }
         break;
@@ -217,39 +240,44 @@ class Bot {
       this.logger.error(`Polling error: ${error}`);
     });
 
-    this.api.on('message', (msg: TelegramBot.Message) => {
+    this.api.on('message', async (msg: TelegramBot.Message) => {
 
       const { userName, chatId, userText } = this.parseMessage(msg);
-      this.logger.debug(`Бот получил сообщение от пользователя ${userName} [${chatId}]: '${userText}'`);
+      this.logger.debug(`${userName} [${chatId}]: '${userText}'`);
+
+      await this.createUser(chatId, userName);
 
       let paramsArr = [];
       let siteName, subscriptionName, subscriptionUrl;
 
       switch(true) {
-        case userText === `/${COMMAND.start}`:
+        // старт
+        case new RegExp(COMMAND_PATTERNS.start).test(userText):
           this.showStartHint(chatId);
-          if (!Object.prototype.hasOwnProperty.call(this.users, chatId)) {
-            this.createUser(chatId, userName);
-          }
           break;
-        case userText === `/${COMMAND.show}`: // просмотр активных подписок
+        // просмотр активных подписок
+        case new RegExp(COMMAND_PATTERNS.show).test(userText):
           this.showSubscriptions(chatId);
           break;
-        case COMMAND_REGEXP.add.test(userText): // добавление новой подписки
+        // добавление новой подписки
+        case new RegExp(COMMAND_PATTERNS.add).test(userText):
           paramsArr = userText.trim().split(' ');
           subscriptionName = paramsArr[1];
           subscriptionUrl = paramsArr[2];
           this.addSubscription(chatId, subscriptionName, subscriptionUrl);
           break;
-        case COMMAND_REGEXP.stop.test(userText): // остановка указанной подписки
+        // остановка указанной подписки
+        case new RegExp(COMMAND_PATTERNS.stop).test(userText):
           paramsArr = userText.trim().split(' ');
           siteName = paramsArr[1];
           subscriptionName = paramsArr[2];
           this.removeSubscription(chatId, siteName, subscriptionName);
           break;
-        case userText === `/${COMMAND.stopall}`: // остановка всех активных подписок
+        // остановка всех активных подписок
+        case new RegExp(COMMAND_PATTERNS.stopall).test(userText):
           this.stopAllSubscriptions(chatId);
           break;
+        // дефолтное действие
         default:
           this.showHelpHint(chatId);
           break;

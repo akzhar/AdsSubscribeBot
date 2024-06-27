@@ -1,22 +1,23 @@
 {
   "name": "ads-subscribe-bot",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "search ads bot",
   "author": "akzhar.taov@yandex.ru",
   "type": "module",
   "scripts": {
-    "dev": "ts-node ./src/index.ts",
+    "start:dev": "tsx ./src/index.ts",
     "build": "tsc && tsc-alias -p tsconfig.json",
-    "start": "cross-env NODE_ENV=production node ./public/index.js"
+    "start:prod": "cross-env NODE_ENV=production node ./public/index.js"
   },
   "engines": {
-    "node": "12.18.3",
-    "npm": "6.14.16"
+    "node": "16.20.2",
+    "npm": "8.19.4"
   },
   "dependencies": {
-    "jsdom": "16.2.2",
+    "dotenv": "16.3.1",
+    "node-html-parser": "6.1.12",
     "node-telegram-bot-api": "0.40.0",
-    "pg": "8.0.0",
+    "pg": "8.11.3",
     "pino": "8.7.0"
   },
   "devDependencies": {
@@ -28,8 +29,8 @@
     "@typescript-eslint/parser": "4.33.0",
     "cross-env": "7.0.3",
     "eslint": "7.18.0",
-    "ts-node": "10.8.1",
     "tsc-alias": "1.7.0",
+    "tsx": "3.13.0",
     "typescript": "4.6.4"
   }
 }

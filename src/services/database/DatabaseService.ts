@@ -33,8 +33,8 @@ class DatabaseService {
     return await this._makeQuery(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL,
-        chatId INT NOT NULL,
-        userobj TEXT NOT NULL,
+        chat_id INT NOT NULL,
+        user_obj TEXT NOT NULL,
         PRIMARY KEY(id)
       );
     `);
@@ -47,26 +47,35 @@ class DatabaseService {
   }
 
   async getUsers() {
-    return await this._makeQuery(
-      `SELECT * FROM users;
+    return await this._makeQuery(`
+      SELECT chat_id, user_obj FROM users;
     `);
+  }
+
+  async hasUser(chatId: number) {
+    const res = await this._makeQuery(`
+      SELECT COUNT(*) FILTER(WHERE chat_id = '${chatId}') FROM users;
+    `);
+    if (res?.rows[0].count === '0') {
+      throw new Error('User does not exists in database');
+    }
   }
 
   async createUser(chatId: number, user: User) {
     return await this._makeQuery(`
-      INSERT INTO users (chatId, userobj) VALUES (${chatId}, '${JSON.stringify(user)}');
+      INSERT INTO users (chat_id, user_obj) VALUES (${chatId}, '${JSON.stringify(user)}');
     `);
   }
 
   async updateUser(chatId: number, user: User) {
     return await this._makeQuery(`
-      UPDATE users SET userobj = '${JSON.stringify(user)}' WHERE chatId = ${chatId};
+      UPDATE users SET user_obj = '${JSON.stringify(user)}' WHERE chat_id = ${chatId};
     `);
   }
 
   async deleteUser(chatId: number) {
     return await this._makeQuery(`
-      DELETE FROM users WHERE chatId = ${chatId};
+      DELETE FROM users WHERE chat_id = ${chatId};
     `);
   }
 

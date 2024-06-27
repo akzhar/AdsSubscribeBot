@@ -1,8 +1,8 @@
-import jsdom from 'jsdom'
-
+// import jsdom from 'jsdom'
 import url from 'url';
 
-const { JSDOM } = jsdom;
+// const { JSDOM } = jsdom;
+import { parse, HTMLElement } from 'node-html-parser';
 
 export type TSiteUrlComponents = { url: string; page: number; }
 export type TSiteKnownAds = { [url: string]: true };
@@ -45,26 +45,31 @@ class Site {
     return `${urlComponents.url}&p=${urlComponents.page}`;
   }
 
-  getItemKey(item: Element): string {
+  getItemKey(item: HTMLElement): string {
     return this.getItemLink(item);
   }
 
   getNewItems(html: string, knownAds: TSiteKnownAds): TSiteItem[] {
-    const dom = new JSDOM(html);
-    const items: NodeListOf<Element> = dom.window.document.querySelectorAll(this.cssSelector.elem);
+    // const dom = new JSDOM(html); // TODO error is here (try another parsing library) TypeError: Cannot read properties of undefined (reading 'some')
+    // const items: NodeListOf<Element> = dom.window.document.querySelectorAll(this.cssSelector.elem);
+    const root = parse(html);
+    const items: HTMLElement[] = root.querySelectorAll(this.cssSelector.elem);
+
+    console.log('items ', items.length, ' found');
+
     const newItems: TSiteItem[] = [];
-    items.forEach((item: Element) => {
+    items.forEach((item: HTMLElement) => {
       const key = this.getItemKey(item);
       if (!Object.prototype.hasOwnProperty.call(knownAds, key)) {
         knownAds[key] = true;
         const newItem = this.getNewItem(item);
-        newItems.push(newItem)
+        newItems.push(newItem);
       }
     });
     return newItems;
   }
 
-  getNewItem(item: Element): TSiteItem {
+  getNewItem(item: HTMLElement): TSiteItem {
     const date = this.getItemDate(item);
     const price = this.getItemPrice(item);
     const link = this.getItemLink(item);
@@ -72,30 +77,30 @@ class Site {
     return newItem;
   }
 
-  getItemLinkContent(item: Element): string {
-    const link = item.querySelector(this.cssSelector.link) as HTMLAnchorElement
-    return link.href;
+  getItemLinkContent(item: HTMLElement): string {
+    const link = item.querySelector(this.cssSelector.link);
+    return link?.getAttribute('href') || '';
   }
 
-  getItemDateContent(item: Element): string | undefined {
+  getItemDateContent(item: HTMLElement): string | undefined {
     return item.querySelector(this.cssSelector.date)?.textContent?.trim();
   }
 
-  getItemPriceContent(item: Element): string | undefined {
+  getItemPriceContent(item: HTMLElement): string | undefined {
     return item.querySelector(this.cssSelector.price)?.textContent?.trim();
   }
 
-  getItemLink(item: Element): string {
+  getItemLink(item: HTMLElement): string {
     const link = this.getItemLinkContent(item);
     const siteUrl = this.url;
     return link.slice(0, siteUrl.length) === siteUrl ? link : `${siteUrl}${link}`;
   }
 
-  getItemDate(item: Element): string | undefined {
+  getItemDate(item: HTMLElement): string | undefined {
     return this.getItemDateContent(item);
   }
 
-  getItemPrice(item: Element): string | undefined {
+  getItemPrice(item: HTMLElement): string | undefined {
     return this.getItemPriceContent(item);
   }
 }
